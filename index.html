@@ -3,251 +3,426 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyAcademy | Ultimate 2.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>Money Guard | Финансовый трекер</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-main: #090a0f;
-            --bg-sidebar: #11131c;
-            --card-bg: #181b28;
-            --text-main: #e2e8f0;
-            --text-muted: #8b94a8;
-            --python-blue: #3776ab;
-            --python-blue-glow: rgba(55, 118, 171, 0.4);
-            --python-yellow: #ffd43b;
-            --python-yellow-glow: rgba(255, 212, 59, 0.2);
-            --success: #10b981;
-            --border: #232738;
-            --yt-red: #ff0000;
+            --bg-body: #090a0f;
+            --bg-card: #151823;
+            --bg-input: #0e1017;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --income: #10b981;
+            --income-glow: rgba(16, 185, 129, 0.2);
+            --expense: #f43f5e;
+            --expense-glow: rgba(244, 63, 94, 0.2);
+            --border: #262b3d;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        /* Кастомный скроллбар */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-main); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--python-blue); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px;
+        }
 
-        /* САЙДБАР */
-        .sidebar { width: 320px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 25px; z-index: 10; box-shadow: 5px 0 20px rgba(0,0,0,0.2); }
-        .logo { font-size: 24px; font-weight: 900; color: var(--text-main); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px var(--python-yellow-glow); }
-        .logo span { color: var(--python-yellow); }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        /* Хедер и Карточка Баланса */
+        .dashboard {
+            grid-column: 1 / -1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--accent); }
         
-        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: var(--bg-main); padding: 5px; border-radius: 10px; border: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
-        .tab-btn:hover { color: var(--text-main); }
-        .tab-btn.active { background: var(--python-blue); color: #fff; box-shadow: 0 0 15px var(--python-blue-glow); }
+        .balance-area { text-align: center; margin: 10px 0; }
+        .balance-title { color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .balance-amount { font-size: 48px; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
 
-        .progress-box { margin-bottom: 25px; background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
-        .prog-text { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); text-transform: uppercase; }
-        .bar-bg { width: 100%; height: 6px; background: var(--bg-main); border-radius: 10px; overflow: hidden; border: 1px solid #000; }
-        .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, var(--python-yellow)); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--python-yellow); }
+        .stats { display: flex; gap: 20px; }
+        .stat-box { 
+            flex: 1; 
+            background: var(--bg-input); 
+            padding: 20px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-box.income { border-bottom: 3px solid var(--income); }
+        .stat-box.expense { border-bottom: 3px solid var(--expense); }
+        .stat-title { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .stat-amount { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .income-text { color: var(--income); }
+        .expense-text { color: var(--expense); }
 
-        .nav-list { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; padding-right: 5px; }
-        .nav-item { background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 12px 15px; border-radius: 10px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; transition: all 0.2s ease; }
-        .nav-item:hover { background: rgba(255,255,255,0.03); transform: translateX(3px); }
-        .nav-item.active { background: var(--card-bg); border-color: var(--border); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-left: 3px solid var(--python-blue); }
+        /* Форма добавления */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
         
-        .num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--python-blue); width: 20px; }
-        .nav-item.active .num { color: var(--python-yellow); }
-        .check { margin-left: auto; color: var(--success); display: none; font-size: 16px; text-shadow: 0 0 10px rgba(16,185,129,0.5); }
-        .nav-item.done .check { display: block; animation: popIn 0.3s ease; }
+        .panel h3 { font-size: 18px; margin-bottom: 20px; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
-
-        /* ОСНОВНАЯ ЗОНА */
-        .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
-        .header { padding: 25px 40px; border-bottom: 1px solid var(--border); background: rgba(9, 10, 15, 0.9); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 5; }
-        .header h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-
-        .view-section { display: none; padding: 40px; }
-        .view-section.active { display: block; }
-
-        .lesson-page { display: none; max-width: 800px; margin: 0 auto; animation: slideUp 0.4s ease; }
-        .lesson-page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2 { font-size: 28px; margin-bottom: 15px; color: #fff; letter-spacing: -0.5px; }
-        p { color: var(--text-muted); line-height: 1.6; font-size: 16px; margin-bottom: 25px; }
-
-        /* КОДОВЫЙ БЛОК */
-        .code-area { background: #0b0d14; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; }
-        .code-top { background: #131620; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a1e2d; }
-        .file-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-        .file-name::before { content: "🐍"; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
         
-        .run-btn { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.3); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
-        .run-btn:hover { background: var(--success); color: #fff; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
-        .run-btn:active { transform: scale(0.95); }
+        input, select {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
         
-        pre { padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #abb2bf; line-height: 1.5; overflow-x: auto; }
+        .radio-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .radio-btn {
+            flex: 1;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.2s;
+            color: var(--text-muted);
+        }
         
-        /* Цвета синтаксиса */
-        .kw { color: #c678dd; } /* Ключевые слова */
-        .str { color: #98c379; } /* Строки */
-        .fn { color: #61afef; } /* Функции */
-        .num-val { color: #d19a66; } /* Числа */
-
-        .terminal { background: #050608; padding: 15px 20px; border-top: 1px solid var(--border); color: #a7b6c2; display: none; font-family: 'JetBrains Mono'; font-size: 13px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); }
-        .term-prefix { color: var(--success); margin-right: 8px; }
-
-        .next-btn { background: var(--python-blue); color: #fff; border: none; padding: 16px 32px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 15px var(--python-blue-glow); }
-        .next-btn:hover { background: #4b8bc4; transform: translateY(-2px); box-shadow: 0 8px 25px var(--python-blue-glow); }
-
-        /* СЕТКА ВИДЕО (Вкладка 2) */
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; max-width: 1000px; margin: 0 auto; }
-        .video-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px 20px; text-decoration: none; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; position: relative; overflow: hidden; }
-        .video-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--yt-red); transform: scaleX(0); transition: 0.3s transform; transform-origin: left; }
-        .video-card:hover { border-color: rgba(255,0,0,0.3); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
-        .video-card:hover::before { transform: scaleX(1); }
+        /* Скрываем стандартные кружочки радио-кнопок */
+        input[type="radio"] { display: none; }
         
-        .yt-icon { font-size: 45px; color: var(--yt-red); margin-bottom: 15px; transition: 0.3s; filter: drop-shadow(0 0 10px rgba(255,0,0,0.3)); }
-        .video-card:hover .yt-icon { transform: scale(1.1); }
-        .v-title { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-        .v-sub { color: var(--text-muted); font-size: 13px; }
+        #type-income:checked + label { background: var(--income-glow); border-color: var(--income); color: var(--income); }
+        #type-expense:checked + label { background: var(--expense-glow); border-color: var(--expense); color: var(--expense); }
 
-        /* МОДАЛЬНОЕ ОКНО */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border: 1px solid var(--python-yellow); max-width: 450px; box-shadow: 0 0 50px rgba(255,212,59,0.2); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .modal-icon { font-size: 60px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,212,59,0.5); }
-        .modal-btn { background: #fff; color: #000; border: none; padding: 14px 30px; border-radius: 8px; font-weight: 800; font-size: 16px; margin-top: 25px; cursor: pointer; transition: 0.2s; width: 100%; }
-        .modal-btn:hover { background: var(--python-yellow); box-shadow: 0 0 15px rgba(255,212,59,0.5); }
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 20px var(--accent-glow);
+        }
+        .btn-submit:hover { transform: translateY(-2px); background: #2563eb; }
+
+        /* История транзакций */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .transaction {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .transaction:hover { transform: translateX(5px); border-color: #333a52; }
+        
+        /* Цветная полоска слева */
+        .transaction::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+        }
+        .transaction.inc::before { background: var(--income); }
+        .transaction.exp::before { background: var(--expense); }
+
+        .t-info { display: flex; flex-direction: column; gap: 4px; }
+        .t-name { font-weight: 600; font-size: 15px; }
+        .t-date { font-size: 12px; color: var(--text-muted); }
+        
+        .t-right { display: flex; align-items: center; gap: 15px; }
+        .t-amount { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; }
+        .t-amount.inc { color: var(--income); }
+        .t-amount.exp { color: var(--expense); }
+
+        .delete-btn {
+            background: rgba(244, 63, 94, 0.1);
+            color: var(--expense);
+            border: none;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 18px;
+            transition: 0.2s;
+            opacity: 0;
+        }
+        .transaction:hover .delete-btn { opacity: 1; }
+        .delete-btn:hover { background: var(--expense); color: #fff; }
+
+        .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 30px 0; }
+
+        /* Адаптация для телефонов */
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .stats { flex-direction: column; }
+            .transaction:hover .delete-btn { opacity: 1; } /* На телефоне кнопка удаления видна всегда */
+        }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="logo">🐍 <span>Py</span>Academy</div>
-        
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('course', this)">💻 Уроки</button>
-            <button class="tab-btn" onclick="switchTab('videos', this)">🎥 Видео</button>
-        </div>
-        
-        <div id="sidebar-progress" class="progress-box">
-            <div class="prog-text"><span>Прогресс</span> <span id="p-val">0%</span></div>
-            <div class="bar-bg"><div class="bar-fill" id="p-fill"></div></div>
-        </div>
-        
-        <nav class="nav-list" id="nav-list">
-            <button class="nav-item active" onclick="jump(1)" id="ni-1"><span class="num">01</span> Переменные <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(2)" id="ni-2"><span class="num">02</span> Вычисления <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(3)" id="ni-3"><span class="num">03</span> Условия <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(4)" id="ni-4"><span class="num">04</span> Списки <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(5)" id="ni-5"><span class="num">05</span> Циклы <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(6)" id="ni-6"><span class="num">06</span> Функции <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(7)" id="ni-7"><span class="num">07</span> Словари <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(8)" id="ni-8"><span class="num">08</span> Ошибки <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(9)" id="ni-9"><span class="num">09</span> f-строки <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(10)" id="ni-10"><span class="num">10</span> Модули <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(11)" id="ni-11"><span class="num">11</span> Файлы <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(12)" id="ni-12"><span class="num">12</span> Классы <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(13)" id="ni-13"><span class="num">13</span> Работа с API <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(14)" id="ni-14"><span class="num">14</span> Telegram Боты <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(15)" id="ni-15"><span class="num">15</span> Нейросети <span class="check">✓</span></button>
-        </nav>
-    </aside>
-
-    <main class="main">
-        <section id="view-course" class="view-section active">
-            <header class="header"><h3 id="lesson-title">Урок 1: Переменные</h3></header>
+    <div class="container">
+        <div class="dashboard">
+            <div class="header">
+                <div class="logo">🛡️ <span>Money</span>Guard</div>
+                <button onclick="clearAll()" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px;">Сбросить всё</button>
+            </div>
             
-            <div class="lesson-container">
-                <div id="p1" class="lesson-page active">
-                    <h2>Основы: Переменные</h2>
-                    <p>Переменные — это коробки, в которых мы храним данные. Сначала пишем имя коробки, потом знак <code>=</code>, а потом то, что хотим туда положить.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span class="file-name">main.py</span> <button class="run-btn" onclick="run(1, this)">▶ ЗАПУСК</button></div>
-                        <pre><code><span class="kw">name</span> = <span class="str">"Gamer"</span>
-<span class="kw">level</span> = <span class="num-val">15</span>
-<span class="fn">print</span>(<span class="str">"Игрок:"</span>, name, <span class="str">"Уровень:"</span>, level)</code></pre>
-                        <div id="out1" class="terminal"><span class="term-prefix">~</span> Игрок: Gamer Уровень: 15</div>
-                    </div>
-                    <button class="next-btn" onclick="done(1, 2)">Следующий урок →</button>
+            <div class="balance-area">
+                <div class="balance-title">Текущий баланс</div>
+                <div class="balance-amount" id="balance">0 <span>с</span></div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box income">
+                    <div class="stat-title">Доходы (Всего)</div>
+                    <div class="stat-amount income-text" id="money-plus">+0</div>
+                </div>
+                <div class="stat-box expense">
+                    <div class="stat-title">Расходы (Всего)</div>
+                    <div class="stat-amount expense-text" id="money-minus">-0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>Добавить запись</h3>
+            <form id="form">
+                <div class="radio-group">
+                    <input type="radio" name="type" id="type-income" value="income">
+                    <label for="type-income" class="radio-btn">В плюс (+)</label>
+                    
+                    <input type="radio" name="type" id="type-expense" value="expense" checked>
+                    <label for="type-expense" class="radio-btn">В минус (-)</label>
                 </div>
 
-                <div id="p2" class="lesson-page">
-                    <h2>Вычисления (Математика)</h2>
-                    <p>Python можно использовать как мощный калькулятор. Складывай, дели, умножай переменные между собой.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span class="file-name">calc.py</span> <button class="run-btn" onclick="run(2, this)">▶ ЗАПУСК</button></div>
-                        <pre><code><span class="kw">price</span> = <span class="num-val">1500</span>
-<span class="kw">discount</span> = <span class="num-val">300</span>
-<span class="fn">print</span>(<span class="str">"Итоговая цена одежды:"</span>, price - discount)</code></pre>
-                        <div id="out2" class="terminal"><span class="term-prefix">~</span> Итоговая цена одежды: 1200</div>
-                    </div>
-                    <button class="next-btn" onclick="done(2, 3)">Следующий урок →</button>
+                <div class="form-group">
+                    <label for="text">Название (например: Покупка ткани, Шаурма)</label>
+                    <input type="text" id="text" placeholder="На что ушли деньги?" required autocomplete="off">
                 </div>
 
-                <div id="p3" class="lesson-page">
-                    <h2>Условия (if / else)</h2>
-                    <p>Если условие верное — программа делает одно. Если нет — другое. Это основа логики любой игры или приложения.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span class="file-name">logic.py</span> <button class="run-btn" onclick="run(3, this)">▶ ЗАПУСК</button></div>
-                        <pre><code><span class="kw">hp</span> = <span class="num-val">20</span>
-<span class="kw">if</span> hp < <span class="num-val">50</span>:
-    <span class="fn">print</span>(<span class="str">"Срочно нужен Медик!"</span>)
-<span class="kw">else</span>:
-    <span class="fn">print</span>(<span class="str">"В бой!"</span>)</code></pre>
-                        <div id="out3" class="terminal"><span class="term-prefix">~</span> Срочно нужен Медик!</div>
-                    </div>
-                    <button class="next-btn" onclick="done(3, 4)">Следующий урок →</button>
+                <div class="form-group">
+                    <label for="amount">Сумма</label>
+                    <input type="number" id="amount" placeholder="Введите сумму..." required min="1">
                 </div>
 
-                <div id="p4" class="lesson-page">
-                    <h2>Списки (Lists)</h2>
-                    <p>Когда нужно сохранить много данных (например, инвентарь или список заказов), мы используем квадратные скобки.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span class="file-name">inventory.py</span> <button class="run-btn" onclick="run(4, this)">▶ ЗАПУСК</button></div>
-                        <pre><code><span class="kw">cart</span> = [<span class="str">"Худи"</span>, <span class="str">"Футболка"</span>, <span class="str">"Кепка"</span>]
-<span class="fn">print</span>(<span class="str">"Первый товар в корзине:"</span>, cart[<span class="num-val">0</span>])</code></pre>
-                        <div id="out4" class="terminal"><span class="term-prefix">~</span> Первый товар в корзине: Худи</div>
-                    </div>
-                    <button class="next-btn" onclick="done(4, 5)">Следующий урок →</button>
+                <button class="btn-submit" type="submit">Добавить в историю</button>
+            </form>
+        </div>
+
+        <div class="panel">
+            <h3>История транзакций</h3>
+            <div class="history-list" id="list">
                 </div>
+        </div>
+    </div>
 
-                <div id="p5" class="lesson-page">
-                    <h2>Циклы (for / while)</h2>
-                    <p>Циклы позволяют повторять одно и то же действие много раз, не переписывая код вручную.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span class="file-name">loop.py</span> <button class="run-btn" onclick="run(5, this)">▶ ЗАПУСК</button></div>
-                        <pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num-val">3</span>):
-    <span class="fn">print</span>(<span class="str">"Генерация логотипа..."</span>)</code></pre>
-                        <div id="out5" class="terminal"><span class="term-prefix">~</span> Генерация логотипа...<br><span class="term-prefix">~</span> Генерация логотипа...<br><span class="term-prefix">~</span> Генерация логотипа...</div>
-                    </div>
-                    <button class="next-btn" onclick="done(5, 6)">Следующий урок →</button>
+    <script>
+        // Получаем элементы интерфейса
+        const balance = document.getElementById('balance');
+        const moneyPlus = document.getElementById('money-plus');
+        const moneyMinus = document.getElementById('money-minus');
+        const list = document.getElementById('list');
+        const form = document.getElementById('form');
+        const textInput = document.getElementById('text');
+        const amountInput = document.getElementById('amount');
+
+        // Вытаскиваем данные из LocalStorage браузера. Если там пусто - создаем пустой массив [].
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        // Функция: Генерируем случайный ID для каждой записи
+        function generateID() {
+            return Math.floor(Math.random() * 100000000);
+        }
+
+        // Функция: Получаем красивую дату (например, 22.10.2024)
+        function getCurrentDate() {
+            const date = new Date();
+            return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+        }
+
+        // Функция: Добавление транзакции
+        function addTransaction(e) {
+            e.preventDefault(); // Останавливаем перезагрузку страницы при нажатии на кнопку
+
+            if (textInput.value.trim() === '' || amountInput.value.trim() === '') {
+                alert('Пожалуйста, введите название и сумму');
+                return;
+            }
+
+            // Узнаем, что выбрал пользователь: доход или расход
+            const type = document.querySelector('input[name="type"]:checked').value;
+            let amount = parseFloat(amountInput.value);
+
+            // Формируем объект данных
+            const transaction = {
+                id: generateID(),
+                text: textInput.value,
+                amount: amount,
+                type: type,
+                date: getCurrentDate()
+            };
+
+            // Добавляем в наш массив
+            transactions.push(transaction);
+
+            // Обновляем всё на экране
+            addTransactionDOM(transaction);
+            updateValues();
+            updateLocalStorage();
+
+            // Очищаем форму
+            textInput.value = '';
+            amountInput.value = '';
+        }
+
+        // Функция: Отрисовка транзакции в HTML (Создаем блоки кодом)
+        function addTransactionDOM(transaction) {
+            // Удаляем надпись "Пока пусто", если она есть
+            const emptyState = document.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            const sign = transaction.type === 'income' ? '+' : '-';
+            const cssClass = transaction.type === 'income' ? 'inc' : 'exp';
+
+            const item = document.createElement('div');
+            item.classList.add('transaction', cssClass);
+
+            item.innerHTML = `
+                <div class="t-info">
+                    <span class="t-name">${transaction.text}</span>
+                    <span class="t-date">${transaction.date}</span>
                 </div>
-
-                <div id="p6" class="lesson-page">
-                    <h2>Функции (def)</h2>
-                    <p>Функция — это твой собственный кусок кода, которому ты дал имя. Вызывай его, когда он понадобится.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span class="file-name">functions.py</span> <button class="run-btn" onclick="run(6, this)">▶ ЗАПУСК</button></div>
-                        <pre><code><span class="kw">def</span> <span class="fn">ubercharge</span>():
-    <span class="fn">print</span>(<span class="str">"Убер-заряд активирован! Неуязвимость 8 сек."</span>)
-
-<span class="fn">ubercharge</span>()</code></pre>
-                        <div id="out6" class="terminal"><span class="term-prefix">~</span> Убер-заряд активирован! Неуязвимость 8 сек.</div>
-                    </div>
-                    <button class="next-btn" onclick="done(6, 7)">Следующий урок →</button>
+                <div class="t-right">
+                    <span class="t-amount ${cssClass}">${sign} ${Math.abs(transaction.amount)}</span>
+                    <button class="delete-btn" onclick="removeTransaction(${transaction.id})">×</button>
                 </div>
+            `;
 
-                <div id="p7" class="lesson-page">
-                    <h2>Словари (Dict)</h2>
-                    <p>Словари идеальны для хранения характеристик объекта. Они работают по принципу "Ключ: Значение".</p>
-                    <div class="code-area">
-                        <div class="code-top"><span class="file-name">player.py</span> <button class="run-btn" onclick="run(7, this)">▶ ЗАПУСК</button></div>
-                        <pre><code><span class="kw">player</span> = {<span class="str">"class"</span>: <span class="str">"Heavy"</span>, <span class="str">"hp"</span>: <span class="num-val">300</span>}
-<span class="fn">print</span>(<span class="str">"Класс:"</span>, player[<span class="str">"class"</span>], <span class="str">"| Здоровье:"</span>, player[<span class="str">"hp"</span>])</code></pre>
-                        <div id="out7" class="terminal"><span class="term-prefix">~</span> Класс: Heavy | Здоровье: 300</div>
-                    </div>
-                    <button class="next-btn" onclick="done(7, 8)">Следующий урок →</button>
-                </div>
+            list.prepend(item); // Добавляем новую запись в начало списка
+        }
 
-                <div id="p8" class="lesson-page">
-                    <h2>Обработка ошибок (try)</h2>
-                    <p>Чтоб
+        // Функция: Подсчет математики (Баланс, Доходы, Расходы)
+        function updateValues() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            transactions.forEach(t => {
+                if (t.type === 'income') {
+                    totalIncome += t.amount;
+                } else {
+                    totalExpense += t.amount;
+                }
+            });
+
+            const totalBalance = totalIncome - totalExpense;
+
+            // Форматируем числа, чтобы тысячи отделялись пробелом (1 000)
+            balance.innerText = totalBalance.toLocaleString('ru-RU') + ' ₸'; // Можно заменить на сом (с) или руб (₽)
+            moneyPlus.innerText = '+' + totalIncome.toLocaleString('ru-RU');
+            moneyMinus.innerText = '-' + totalExpense.toLocaleString('ru-RU');
+        }
+
+        // Функция: Удаление транзакции по клику на крестик
+        function removeTransaction(id) {
+            // Оставляем только те транзакции, ID которых НЕ равен удаляемому
+            transactions = transactions.filter(t => t.id !== id);
+            
+            updateLocalStorage();
+            init(); // Перерисовываем весь интерфейс
+        }
+
+        // Функция: Очистить всю историю
+        function clearAll() {
+            if(confirm('Удалить всю историю финансов? Это действие нельзя отменить.')) {
+                transactions = [];
+                updateLocalStorage();
+                init();
+            }
+        }
+
+        // Функция: Сохранение данных в кэш браузера
+        function updateLocalStorage() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        // Функция: Запуск приложения
+        function init() {
+            list.innerHTML = ''; // Очищаем список
+            
+            if (transactions.length === 0) {
+                list.innerHTML = '<div class="empty-state">История пуста. Добавьте первую запись!</div>';
+            } else {
+                // Если данные есть, рисуем их
+                transactions.forEach(addTransactionDOM);
+            }
+            
+            updateValues();
+        }
+
+        // Запуск
+        init();
+
+        // Слушатель на кнопку в форме
+        form.addEventListener('submit', addTransaction);
+    </script>
+</body>
+    </html>
+    
