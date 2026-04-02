@@ -2,427 +2,1077 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Helper| Финансовый трекер</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PyAcademy: Ultimate Pro | Стань Senior Разработчиком</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+
     <style>
+        /* ==========================================================================
+           1. ПЕРЕМЕННЫЕ И ОБНУЛЕНИЕ (CSS VARIABLES & RESET)
+           ========================================================================== */
         :root {
-            --bg-body: #090a0f;
-            --bg-card: #151823;
-            --bg-input: #0e1017;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.3);
-            --income: #10b981;
-            --income-glow: rgba(16, 185, 129, 0.2);
-            --expense: #f43f5e;
-            --expense-glow: rgba(244, 63, 94, 0.2);
-            --border: #262b3d;
+            /* Палитра киберпанка */
+            --bg-deep: #030306;
+            --bg-main: #08090f;
+            --bg-card: rgba(16, 18, 27, 0.8);
+            --bg-input: #0c0e14;
+            --border-color: rgba(255, 255, 255, 0.06);
+            
+            /* Цвета текста */
+            --text-main: #e2e8f0;
+            --text-muted: #848da1;
+            --text-dark: #4a5568;
+            
+            /* Акцентные неоновые цвета */
+            --nitro-blue: #007bff;
+            --nitro-blue-glow: rgba(0, 123, 255, 0.5);
+            --electric-cyan: #00f2fe;
+            --voltage-yellow: #ffe066;
+            --voltage-yellow-glow: rgba(255, 224, 102, 0.3);
+            --matrix-green: #0f0;
+            --neon-red: #ff0055;
+            
+            /* Состояния */
+            --success: #10b981;
+            --warning: #f59e0b;
+            
+            /* Параметры UI */
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.5);
+            --shadow-neon: 0 0 15px var(--nitro-blue-glow);
+            --transition-fast: 0.2s ease;
+            --transition-md: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'Fira Code', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: #1a1d29; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--nitro-blue); }
 
-        body { 
-            background-color: var(--bg-body); 
+        html, body { 
+            height: 100%; 
+            width: 100%; 
+            background-color: var(--bg-deep); 
             color: var(--text-main); 
-            min-height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 20px;
+            font-family: var(--font-main); 
+            font-size: 15px; 
+            line-height: 1.5; 
+            overflow: hidden; /* Основной скролл внутри элементов */
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        /* Хедер и Карточка Баланса */
-        .dashboard {
-            grid-column: 1 / -1;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .header { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .logo span { color: var(--accent); }
-        
-        .balance-area { text-align: center; margin: 10px 0; }
-        .balance-title { color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .balance-amount { font-size: 48px; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
-
-        .stats { display: flex; gap: 20px; }
-        .stat-box { 
-            flex: 1; 
-            background: var(--bg-input); 
-            padding: 20px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .stat-box.income { border-bottom: 3px solid var(--income); }
-        .stat-box.expense { border-bottom: 3px solid var(--expense); }
-        .stat-title { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-        .stat-amount { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-        .income-text { color: var(--income); }
-        .expense-text { color: var(--expense); }
-
-        /* Форма добавления */
-        .panel {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .panel h3 { font-size: 18px; margin-bottom: 20px; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
-        
-        input, select {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 14px 16px;
-            border-radius: 12px;
-            font-size: 15px;
-            outline: none;
-            transition: 0.3s;
-        }
-        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-        
-        .radio-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .radio-btn {
-            flex: 1;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: 0.2s;
-            color: var(--text-muted);
-        }
-        
-        /* Скрываем стандартные кружочки радио-кнопок */
-        input[type="radio"] { display: none; }
-        
-        #type-income:checked + label { background: var(--income-glow); border-color: var(--income); color: var(--income); }
-        #type-expense:checked + label { background: var(--expense-glow); border-color: var(--expense); color: var(--expense); }
-
-        .btn-submit {
-            width: 100%;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 5px 20px var(--accent-glow);
-        }
-        .btn-submit:hover { transform: translateY(-2px); background: #2563eb; }
-
-        /* История транзакций */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 350px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .transaction {
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.2s;
-            position: relative;
+        /* ==========================================================================
+           2. ЖИВОЙ ФОН (ANIMATED BACKGROUND)
+           ========================================================================== */
+        #nitro-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(0, 123, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(255, 224, 102, 0.05) 0%, transparent 40%),
+                var(--bg-deep);
             overflow: hidden;
         }
-        .transaction:hover { transform: translateX(5px); border-color: #333a52; }
         
-        /* Цветная полоска слева */
-        .transaction::before {
+        #nitro-bg::before {
             content: '';
             position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
+            width: 200%; height: 200%;
+            top: -50%; left: -50%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg) translateY(0);
+            animation: gridMove 20s linear infinite;
+            opacity: 0.15;
         }
-        .transaction.inc::before { background: var(--income); }
-        .transaction.exp::before { background: var(--expense); }
 
-        .t-info { display: flex; flex-direction: column; gap: 4px; }
-        .t-name { font-weight: 600; font-size: 15px; }
-        .t-date { font-size: 12px; color: var(--text-muted); }
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 50px; }
+        }
+
+        /* ==========================================================================
+           3. ГЛОБАЛЬНЫЕ СТИЛИ UI (GLOBAL UI)
+           ========================================================================== */
+        .glass { background: var(--bg-card); backdrop-filter: blur(10px); border: 1px solid var(--border-color); }
+        .neon-text { text-shadow: 0 0 10px currentColor; }
         
-        .t-right { display: flex; align-items: center; gap: 15px; }
-        .t-amount { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; }
-        .t-amount.inc { color: var(--income); }
-        .t-amount.exp { color: var(--expense); }
+        button { cursor: pointer; border: none; font-family: var(--font-main); transition: var(--transition-fast); }
+        button:active { transform: scale(0.97); }
 
-        .delete-btn {
-            background: rgba(244, 63, 94, 0.1);
-            color: var(--expense);
-            border: none;
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 18px;
-            transition: 0.2s;
-            opacity: 0;
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; vertical-align: middle; margin-left: 5px; }
+        .badge-pro { background: var(--voltage-yellow); color: #000; box-shadow: 0 0 10px var(--voltage-yellow-glow); }
+        .badge-new { background: var(--nitro-blue); color: #fff; }
+
+        /* ==========================================================================
+           4. ОСНОВНАЯ РАЗМЕТКА (LAYOUT)
+           ========================================================================== */
+        #app-wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
         }
-        .transaction:hover .delete-btn { opacity: 1; }
-        .delete-btn:hover { background: var(--expense); color: #fff; }
 
-        .empty-state { text-align: center; color: var(--text-muted); font-size: 14px; padding: 30px 0; }
+        /* ==========================================================================
+           5. САЙДБАР (SIDEBAR)
+           ========================================================================== */
+        .sidebar {
+            width: 300px;
+            height: 100%;
+            background: rgba(8, 9, 15, 0.95);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            transition: var(--transition-md);
+            z-index: 100;
+        }
 
-        /* Адаптация для телефонов */
-        @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
-            .stats { flex-direction: column; }
-            .transaction:hover .delete-btn { opacity: 1; } /* На телефоне кнопка удаления видна всегда */
+        .sidebar-header { margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; }
+        
+        .logo { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--nitro-blue); text-shadow: 0 0 15px var(--nitro-blue-glow); }
+        
+        #mobile-close { display: none; background: transparent; color: var(--text-muted); font-size: 24px; }
+
+        /* Переключатель вкладок */
+        .tab-switcher { display: flex; gap: 5px; background: var(--bg-deep); padding: 5px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; }
+        .tab-btn { flex: 1; padding: 12px; background: transparent; color: var(--text-muted); border-radius: 9px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active { background: var(--bg-card); color: #fff; border: 1px solid var(--border-color); box-shadow: var(--shadow-card); }
+
+        /* Прогресс бар */
+        .progress-container { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 25px; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        .progress-info span:last-child { color: var(--voltage-yellow); }
+        
+        .bar-bg { width: 100%; height: 6px; background: var(--bg-deep); border-radius: 10px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--nitro-blue), var(--electric-cyan)); border-radius: 10px; transition: width 0.6s ease; box-shadow: 0 0 10px var(--nitro-blue-glow); }
+
+        /* Список уроков */
+        .nav-list { flex: 1; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 5px; }
+        
+        .nav-item {
+            background: transparent; border: 1px solid transparent; color: var(--text-muted);
+            padding: 12px 15px; border-radius: 10px; cursor: pointer; text-align: left;
+            display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: #fff; }
+        .nav-item.active { background: var(--bg-card); border-color: var(--border-color); color: #fff; border-left: 3px solid var(--nitro-blue); }
+        
+        .nav-num { font-family: var(--font-code); font-size: 11px; font-weight: 700; color: var(--nitro-blue); opacity: 0.7; width: 20px; text-align: right; }
+        .nav-item.active .nav-num { color: var(--electric-cyan); opacity: 1; }
+        
+        .nav-check { margin-left: auto; color: var(--success); font-size: 14px; display: none; }
+        .nav-item.done .nav-check { display: block; animation: checkIn 0.3s ease; }
+
+        @keyframes checkIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        /* ==========================================================================
+           6. ГЛАВНЫЙ КОНТЕНТ (MAIN CONTENT)
+           ========================================================================== */
+        .main-content {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Хедер контента */
+        .content-header {
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(8, 9, 15, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky; top: 0; z-index: 90;
+        }
+        
+        #mobile-nav-toggle { display: none; background: transparent; color: #fff; font-size: 22px; margin-right: 15px; }
+        .header-title-area { flex: 1; display: flex; align-items: center; }
+        
+        .current-lesson-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+        
+        .user-status { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        .status-dot { width: 8px; height: 8px; background: var(--matrix-green); border-radius: 50%; box-shadow: 0 0 10px var(--matrix-green); animation: pulseGreen 2s infinite; }
+
+        @keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(15, 255, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(15, 255, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(15, 255, 0, 0); } }
+
+        /* Область переключения вкладок контента */
+        .view-section {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+            padding: 40px;
+            scroll-behavior: smooth;
+        }
+        .view-section.active { display: block; animation: viewIn 0.4s ease; }
+        
+        @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ==========================================================================
+           7. ВКЛАДКА КУРСА (COURSE TAB)
+           ========================================================================== */
+        .lesson-container { max-width: 850px; margin: 0 auto; width: 100%; }
+        
+        .lesson-page { display: none; animation: lessonIn 0.4s ease; }
+        .lesson-page.active { display: block; }
+
+        @keyframes lessonIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        .lesson-page h1 { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 15px; letter-spacing: -1px; }
+        .lesson-page h2 { font-size: 18px; font-weight: 600; color: var(--nitro-blue); margin-bottom: 20px; }
+        .lesson-content-text p { color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-size: 15px; }
+        .lesson-content-text ul { color: var(--text-muted); margin-left: 20px; margin-bottom: 20px; }
+        .lesson-content-text li { margin-bottom: 10px; }
+        
+        code.inline-code { background: #1a1d29; color: var(--electric-cyan); padding: 2px 6px; border-radius: 4px; font-family: var(--font-code); font-size: 13px; }
+
+        /* БЛОК КОДА IDE */
+        .ide-widget {
+            background: #0b0d14;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            margin: 30px 0;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: box-shadow 0.3s ease;
+        }
+        .ide-widget:hover { box-shadow: 0 20px 60px rgba(0, 123, 255, 0.15); }
+
+        .ide-header {
+            background: #11141f;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .ide-file-info { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); font-family: var(--font-code); }
+        .ide-file-icon { color: var(--nitro-blue); font-size: 16px; }
+        
+        .ide-actions { display: flex; gap: 8px; }
+        .run-btn {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .run-btn:hover { background: var(--success); color: #fff; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+        
+        /* Подсветка кода */
+        .ide-body pre { padding: 20px; font-family: var(--font-code); font-size: 14px; color: #abb2bf; line-height: 1.6; overflow-x: auto; tab-size: 4; }
+        
+        .c-kw { color: #c678dd; } /* KeyWord */
+        .c-st { color: #98c379; } /* String */
+        .c-fn { color: #61afef; } /* Function */
+        .c-nm { color: #d19a66; } /* Number */
+        .c-cm { color: #5c6370; font-style: italic; } /* Comment */
+        .c-op { color: #56b6c2; } /* Operator */
+        .c-bo { color: #56b6c2; font-weight: bold; } /* Boolean */
+
+        /* Терминал вывода */
+        .ide-terminal {
+            background: #050509;
+            border-top: 1px solid var(--border-color);
+            padding: 15px 20px;
+            font-family: var(--font-code);
+            font-size: 13px;
+            color: #a7b6c2;
+            display: none; /* Скрыт до запуска */
+            position: relative;
+        }
+        .ide-terminal.active { display: block; animation: termIn 0.3s ease; }
+        @keyframes termIn { from { opacity: 0; height: 0; } to { opacity: 1; height: auto; } }
+        
+        .term-head { color: var(--text-dark); font-size: 11px; margin-bottom: 8px; text-transform: uppercase; font-weight: 700; }
+        .term-line { display: flex; gap: 8px; margin-bottom: 4px; }
+        .term-prefix { color: var(--matrix-green); opacity: 0.7; }
+        
+        /* Кнопка навигации внизу */
+        .lesson-footer { margin-top: 50px; padding-top: 30px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; }
+        .next-lesson-btn {
+            background: var(--nitro-blue);
+            color: #fff;
+            padding: 16px 35px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 8px 20px var(--nitro-blue-glow);
+        }
+        .next-lesson-btn:hover { background: #1a88ff; transform: translateY(-3px); box-shadow: 0 12px 25px var(--nitro-blue-glow); }
+
+        /* ==========================================================================
+           8. ВКЛАДКА ВИДЕО (VIDEOS TAB)
+           ========================================================================= */
+        .videos-container { max-width: 1100px; margin: 0 auto; width: 100%; }
+        .videos-header { margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        .videos-header h1 { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+        .videos-header p { color: var(--text-muted); font-size: 16px; max-width: 600px; }
+
+        .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        
+        .video-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex; flex-direction: column;
+            gap: 15px;
+            transition: var(--transition-fast);
+            position: relative; overflow: hidden;
+        }
+        .video-card:hover { border-color: rgba(255, 255, 255, 0.15); transform: translateY(-5px); box-shadow: var(--shadow-card); }
+        .video-card::after { content:''; position: absolute; inset:0; background: linear-gradient(135deg, var(--nitro-blue-glow), transparent 70%); opacity: 0; transition: 0.3s; }
+        .video-card:hover::after { opacity: 1; }
+
+        .v-icon-layer { position: relative; z-index: 2; font-size: 30px; color: var(--neon-red); filter: drop-shadow(0 0 10px var(--neon-red)); }
+        
+        .v-meta { position: relative; z-index: 2; flex: 1; }
+        .v-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+        .v-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+        
+        .v-link-display {
+            font-family: var(--font-code);
+            font-size: 11px;
+            color: var(--electric-cyan);
+            background: var(--bg-deep);
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            display: none; /* Пока нет ссылки */
+        }
+        .v-link-display.active { display: block; }
+
+        .v-actions { position: relative; z-index: 2; display: flex; gap: 8px; margin-top: 10px; }
+        .v-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        
+        .v-btn-set { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border-color); }
+        .v-btn-set:hover { background: #fff; color: #000; }
+        
+        .v-btn-watch { background: var(--neon-red); color: #fff; box-shadow: 0 4px 10px rgba(255, 0, 85, 0.3); }
+        .v-btn-watch:hover { background: #ff2b6f; box-shadow: 0 6px 15px rgba(255, 0, 85, 0.5); }
+        .v-btn-watch:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; opacity: 0.5; }
+
+        /* ==========================================================================
+           9. МОДАЛЬНЫЕ ОКНА И ОВЕРЛЕИ (MODALS)
+           ========================================================================= */
+        .overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: none;
+            justify-content: center; align-items: center;
+            padding: 20px;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .overlay.active { display: flex; opacity: 1; }
+        
+        .cyber-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--voltage-yellow);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 224, 102, 0.15);
+            transform: scale(0.9); transition: transform 0.3s ease;
+        }
+        .overlay.active .cyber-modal { transform: scale(1); }
+        
+        .modal-ico { font-size: 60px; color: var(--voltage-yellow); margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--voltage-yellow-glow)); }
+        .cyber-modal h2 { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 10px; letter-spacing: -1px; }
+        .cyber-modal p { color: var(--text-muted); margin-bottom: 30px; font-size: 15px; }
+        
+        .modal-btn {
+            background: #fff; color: #000;
+            width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 16px; font-weight: 800; text-transform: uppercase;
+        }
+        .modal-btn:hover { background: var(--voltage-yellow); box-shadow: 0 0 20px var(--voltage-yellow-glow); }
+
+        /* ==========================================================================
+           10. АДАПТИВНОСТЬ (RESPONSIVE DESIGN) - КЛЮЧЕВОЙ РАЗДЕЛ
+           ========================================================================= */
+        
+        /* Планшеты и малые ноуты */
+        @media (max-width: 1100px) {
+            .video-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* Большие телефоны */
+        @media (max-width: 900px) {
+            .sidebar {
+                position: absolute;
+                left: -300px; /* Скрыт */
+                top: 0; bottom: 0;
+                box-shadow: 10px 0 50px rgba(0,0,0,0.8);
+            }
+            .sidebar.active { left: 0; }
+            
+            #mobile-nav-toggle { display: block; }
+            #mobile-close { display: block; }
+            
+            .content-header { padding: 15px 20px; }
+            .view-section { padding: 25px 20px; }
+            
+            .ide-body pre { font-size: 13px; }
+            
+            .v-btn { font-size: 11px; padding: 8px; }
+        }
+
+        /* Малые телефоны */
+        @media (max-width: 600px) {
+            .lesson-page h1 { font-size: 26px; }
+            .next-lesson-btn { width: 100%; justify-content: center; }
+            
+            .videos-header h1 { font-size: 26px; }
+            .video-grid { grid-template-columns: 1fr; gap: 15px; }
+            .video-card { padding: 20px; min-height: auto; }
+            
+            .cyber-modal { padding: 30px 20px; }
+            .cyber-modal h2 { font-size: 24px; }
+        }
+
+        /* Фикс для очень малых экранов */
+        @media (max-width: 360px) {
+            .logo { font-size: 18px; }
+            .tab-btn { font-size: 11px; padding: 10px 5px; }
+            .nav-item { font-size: 12px; padding: 10px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="dashboard">
-            <div class="header">
-                <div class="logo">🛡️ <span>Money</span>Guard</div>
-                <button onclick="clearAll()" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px;">Сбросить всё</button>
+    <div id="nitro-bg"></div>
+
+    <div id="app-wrapper">
+        
+        <aside class="sidebar active" id="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo">🐍 <span>Py</span>Academy</a>
+                <button id="mobile-close" onclick="toggleMobileNav()">×</button>
             </div>
             
-            <div class="balance-area">
-                <div class="balance-title">Текущий баланс</div>
-                <div class="balance-amount" id="balance">0 <span>с</span></div>
+            <div class="tab-switcher">
+                <button class="tab-btn active" onclick="switchMainTab('course', this)">Процесс</button>
+                <button class="tab-btn" onclick="switchMainTab('videos', this)">Медиа</button>
             </div>
-
-            <div class="stats">
-                <div class="stat-box income">
-                    <div class="stat-title">Доходы (Всего)</div>
-                    <div class="stat-amount income-text" id="money-plus">+0</div>
+            
+            <div class="progress-container" id="prog-zone">
+                <div class="progress-info">
+                    <span>Твой код-уровень</span>
+                    <span id="p-val">0%</span>
                 </div>
-                <div class="stat-box expense">
-                    <div class="stat-title">Расходы (Всего)</div>
-                    <div class="stat-amount expense-text" id="money-minus">-0</div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="p-fill"></div>
                 </div>
             </div>
-        </div>
+            
+            <nav class="nav-list" id="nav-list">
+                <button class="nav-item active" onclick="loadLesson(1)" id="ni-1">
+                    <span class="nav-num">01</span>
+                    <span class="nav-name">Пролог: Настройка ядра</span>
+                    <span class="nav-check">✔</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(2)" id="ni-2">
+                    <span class="nav-num">02</span>
+                    <span class="nav-name">Дата-ячейки: Переменные</span>
+                    <span class="nav-check">✔</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(3)" id="ni-3">
+                    <span class="nav-num">03</span>
+                    <span class="nav-name">Арифметика Матрицы</span>
+                    <span class="nav-check">✔</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(4)" id="ni-4">
+                    <span class="nav-num">04</span>
+                    <span class="nav-name">Ветвление реальности (If)</span>
+                    <span class="nav-check">✔</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(5)" id="ni-5">
+                    <span class="nav-num">05</span>
+                    <span class="nav-name">Массивы данных: Списки</span>
+                    <span class="nav-check">✔</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(6)" id="ni-6">
+                    <span class="nav-num">06</span>
+                    <span class="nav-name">Циклы: Бесконечность</span>
+                    <span class="nav-check">✔</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(7)" id="ni-7">
+                    <span class="nav-num">07</span>
+                    <span class="nav-name">Протоколы: Функции</span>
+                    <span class="nav-check">✔</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(8)" id="ni-8">
+                    <span class="nav-num">08</span>
+                    <span class="nav-name">Ключ-Значение: Словари</span>
+                    <span class="nav-check">Checked</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(9)" id="ni-9">
+                    <span class="nav-num">09</span>
+                    <span class="nav-name">Текст & Слияние (f-strings)</span>
+                    <span class="nav-check">Checked</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(10)" id="ni-10">
+                    <span class="nav-num">10</span>
+                    <span class="nav-name">Модули: Импорт Силы</span>
+                    <span class="nav-check">Checked</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(11)" id="ni-11">
+                    <span class="nav-num">11</span>
+                    <span class="nav-name">Сбои системы: Ошибки</span>
+                    <span class="nav-check">Checked</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(12)" id="ni-12">
+                    <span class="nav-num">12</span>
+                    <span class="nav-name">Поток данных: Файлы</span>
+                    <span class="nav-check">Checked</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(13)" id="ni-13">
+                    <span class="nav-num">13</span>
+                    <span class="nav-name">Объекты & Классы (ООП) <span class="badge badge-pro">PRO</span></span>
+                    <span class="nav-check">Checked</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(14)" id="ni-14">
+                    <span class="nav-num">14</span>
+                    <span class="nav-name">Сеть: Запросы к API</span>
+                    <span class="nav-check">Checked</span>
+                </button>
+                <button class="nav-item" onclick="loadLesson(15)" id="ni-15">
+                    <span class="nav-num">15</span>
+                    <span class="nav-name">Создаем Telegram Бота</span>
+                    <span class="nav-check">Checked</span>
+                </button>
+            </nav>
+        </aside>
 
-        <div class="panel">
-            <h3>Добавить запись</h3>
-            <form id="form">
-                <div class="radio-group">
-                    <input type="radio" name="type" id="type-income" value="income">
-                    <label for="type-income" class="radio-btn">В плюс (+)</label>
+        <main class="main-content">
+            
+            <header class="content-header">
+                <div class="header-title-area">
+                    <button id="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
+                    <h3 class="current-lesson-title" id="head-title">Загрузка...</h3>
+                </div>
+                <div class="user-status">
+                    <div class="status-dot"></div>
+                    SYSTEM ONLINE
+                </div>
+            </header>
+
+            <section id="view-course" class="view-section active">
+                <div class="lesson-container" id="lesson-content-area">
                     
-                    <input type="radio" name="type" id="type-expense" value="expense" checked>
-                    <label for="type-expense" class="radio-btn">В минус (-)</label>
-                </div>
+                    <div id="p1" class="lesson-page active">
+                        <h1>Инициализация: Привет, Матрица</h1>
+                        <h2>Уровень 1: Подготовка окружения и первая команда</h2>
+                        
+                        <div class="lesson-content-text">
+                            <p>Добро пожаловать в <strong>PyAcademy</strong>, рекрут. Ты сделал первый шаг к тому, чтобы стать архитектором цифровых миров. Python — это не просто язык программирования, это твой универсальный инструмент, твой световой меч в мире данных.</p>
+                            <p>На этом уровне мы не будем устанавливать сложные IDE. Наша цель — понять базовый протокол общения с компьютером. Самая главная команда в арсенале любого хакера — это <code class="inline-code">print()</code>. Она заставляет машину вывести данные на экран.</p>
+                            <ul>
+                                <li>Команда <code class="inline-code">print</code> — это функция вывода.</li>
+                                <li>Текст внутри скобок должен быть заключен в кавычки (одинарные или двойные).</li>
+                            </ul>
+                            <p>Попробуй запустить код ниже. Это твоя первая цифровая сигнатура.</p>
+                        </div>
 
-                <div class="form-group">
-                    <label for="text">Название (например: Покупка ткани, Шаурма)</label>
-                    <input type="text" id="text" placeholder="На что ушли деньги?" required autocomplete="off">
-                </div>
+                        <div class="ide-widget">
+                            <div class="ide-header">
+                                <div class="ide-file-info"><span class="ide-file-icon">📄</span> hello_world.py</div>
+                                <div class="ide-actions">
+                                    <button class="run-btn" onclick="runCode(1, this)">▶ ЗАПУСК</button>
+                                </div>
+                            </div>
+                            <div class="ide-body">
+<pre><code><span class="c-cm"># Моя первая программа на Python</span>
+<span class="fn">print</span>(<span class="c-st">"Инициализация системы... Привет, Мир!"</span>)
+<span class="fn">print</span>(<span class="c-st">"Дешифровка завершена."</span>)</code></pre>
+                            </div>
+                            <div class="ide-terminal" id="term-1">
+                                <div class="term-head">Output</div>
+                                <div class="term-line"><span class="term-prefix">>>></span> <span class="term-out">Инициализация системы... Привет, Мир!</span></div>
+                                <div class="term-line"><span class="term-prefix">>>></span> <span class="term-out">Дешифровка завершена.</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-footer">
+                            <button class="next-lesson-btn" onclick="completeLesson(1, 2)">Активировать Уровень 2 →</button>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="amount">Сумма</label>
-                    <input type="number" id="amount" placeholder="Введите сумму..." required min="1">
-                </div>
+                    <div id="p2" class="lesson-page">
+                        <h1>Ячейки Памяти: Переменные</h1>
+                        <h2>Уровень 2: Хранение и манипуляция данными</h2>
+                        
+                        <div class="lesson-content-text">
+                            <p>Код не может существовать без данных. Чтобы программа помнила информацию, нам нужны **переменные**. Представь их как подписанные коробки в огромном хранилище оперативной памяти.</p>
+                            <p>В Python всё просто: ты придумываешь имя (например, <code class="inline-code">user_name</code>), ставишь знак равно <code class="inline-code">=</code> (это оператор присваивания), и кладешь туда значение.</p>
+                            <p>В коде ниже мы создаем три ячейки: для текста, целого числа и числа с плавающей запятой.</p>
+                        </div>
 
-                <button class="btn-submit" type="submit">Добавить в историю</button>
-            </form>
-        </div>
+                        <div class="ide-widget">
+                            <div class="ide-header">
+                                <div class="ide-file-info"><span class="ide-file-icon">📄</span> variables.py</div>
+                                <div class="ide-actions">
+                                    <button class="run-btn" onclick="runCode(2, this)">▶ ЗАПУСК</button>
+                                </div>
+                            </div>
+                            <div class="ide-body">
+<pre><code><span class="c-cm"># Записываем данные агента</span>
+<span class="kw">agent_name</span> = <span class="c-st">"Neo"</span>          <span class="c-cm"># Строка (String)</span>
+<span class="kw">access_level</span> = <span class="c-nm">10</span>           <span class="c-cm"># Целое число (Integer)</span>
+<span class="kw">integrity</span> = <span class="c-nm">0.98</span>            <span class="c-cm"># Число с запятой (Float)</span>
 
-        <div class="panel">
-            <h3>История транзакций</h3>
-            <div class="history-list" id="list">
+<span class="fn">print</span>(<span class="c-st">"Агент:"</span>, agent_name)
+<span class="fn">print</span>(<span class="c-st">"Уровень допуска:"</span>, access_level)</code></pre>
+                            </div>
+                            <div class="ide-terminal" id="term-2">
+                                <div class="term-head">Output</div>
+                                <div class="term-line"><span class="term-prefix">>>></span> <span class="term-out">Агент: Neo</span></div>
+                                <div class="term-line"><span class="term-prefix">>>></span> <span class="term-out">Уровень допуска: 10</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-footer">
+                            <button class="next-lesson-btn" onclick="completeLesson(2, 3)">Изучить Арифметику →</button>
+                        </div>
+                    </div>
+
+                    </div>
+            </section>
+
+            <section id="view-videos" class="view-section">
+                <div class="videos-container">
+                    <div class="videos-header">
+                        <h1>Центр Видео-Протоколов</h1>
+                        <p>Здесь собраны внешние модули визуального обучения. Ты можешь установить свои ссылки на YouTube для быстрого доступа к туториалам.</p>
+                    </div>
+                    
+                    <div class="video-grid">
+                        <div class="video-card glass" id="vc-1">
+                            <div class="v-icon-layer">▶</div>
+                            <div class="v-meta">
+                                <div class="v-title">Установка Python & VS Code</div>
+                                <div class="v-desc">Полный гайд по настройке боевого окружения на Windows/Mac.</div>
+                                <div class="v-link-display" id="v-link-1">Нет ссылки</div>
+                            </div>
+                            <div class="v-actions">
+                                <button class="v-btn v-btn-set" onclick="setVideoLink(1)">Ссылка</button>
+                                <button class="v-btn v-btn-watch" id="v-watch-1" onclick="watchVideo(1)" disabled>Смотреть</button>
+                            </div>
+                        </div>
+                        <div class="video-card glass" id="vc-2">
+                            <div class="v-icon-layer">▶</div>
+                            <div class="v-meta">
+                                <div class="v-title">Основы Синтаксиса за 15 мин</div>
+                                <div class="v-desc">Быстрый пробег по переменным, типам данных и циклам.</div>
+                                <div class="v-link-display" id="v-link-2">Нет ссылки</div>
+                            </div>
+                            <div class="v-actions">
+                                <button class="v-btn v-btn-set" onclick="setVideoLink(2)">Ссылка</button>
+                                <button class="v-btn v-btn-watch" id="v-watch-2" onclick="watchVideo(2)" disabled>Смотреть</button>
+                            </div>
+                        </div>
+                        <div class="video-card glass" id="vc-3">
+                            <div class="v-icon-layer">▶</div>
+                            <div class="v-meta">
+                                <div class="v-title">Структуры данных: Lists & Dicts</div>
+                                <div class="v-desc">Глубокое понимание списков и словарей в Python.</div>
+                                <div class="v-link-display" id="v-link-3">Нет ссылки</div>
+                            </div>
+                            <div class="v-actions">
+                                <button class="v-btn v-btn-set" onclick="setVideoLink(3)">Ссылка</button>
+                                <button class="v-btn v-btn-watch" id="v-watch-3" onclick="watchVideo(3)" disabled>Смотреть</button>
+                            </div>
+                        </div>
+                        <div class="video-card glass" id="vc-4">
+                            <div class="v-icon-layer">▶</div>
+                            <div class="v-meta">
+                                <div class="v-title">ООП в Python простым языком</div>
+                                <div class="v-desc">Классы, объекты, наследование. Теория и практика.</div>
+                                <div class="v-link-display" id="v-link-4">Нет ссылки</div>
+                            </div>
+                            <div class="v-actions">
+                                <button class="v-btn v-btn-set" onclick="setVideoLink(4)">Ссылка</button>
+                                <button class="v-btn v-btn-watch" id="v-watch-4" onclick="watchVideo(4)" disabled>Смотреть</button>
+                            </div>
+                        </div>
+                        <div class="video-card glass" id="vc-5">
+                            <div class="v-icon-layer">▶</div>
+                            <div class="v-meta">
+                                <div class="v-title">Requests: Работа с API</div>
+                                <div class="v-desc">Учимся парсить сайты и получать данные от серверов.</div>
+                                <div class="v-link-display" id="v-link-5">Нет ссылки</div>
+                            </div>
+                            <div class="v-actions">
+                                <button class="v-btn v-btn-set" onclick="setVideoLink(5)">Ссылка</button>
+                                <button class="v-btn v-btn-watch" id="v-watch-5" onclick="watchVideo(5)" disabled>Смотреть</button>
+                            </div>
+                        </div>
+                        <div class="video-card glass" id="vc-6">
+                            <div class="v-icon-layer">▶</div>
+                            <div class="v-meta">
+                                <div class="v-title">Aiogram: Делаем Telegram бота</div>
+                                <div class="v-desc">Создание современного асинхронного бота с кнопками.</div>
+                                <div class="v-link-display" id="v-link-6">Нет ссылки</div>
+                            </div>
+                            <div class="v-actions">
+                                <button class="v-btn v-btn-set" onclick="setVideoLink(6)">Ссылка</button>
+                                <button class="v-btn v-btn-watch" id="v-watch-6" onclick="watchVideo(6)" disabled>Смотреть</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="overlay" id="finish-overlay">
+        <div class="cyber-modal">
+            <div class="modal-ico">🏆</div>
+            <h2>СИСТЕМА ВЗЛОМАНА!</h2>
+            <p>Поздравляю, архитектор. Ты прошел полный цикл инициализации PyAcademy. Твой нейро-профиль обновлен. Теперь ты готов к реальным задачам в Матрице Кода.</p>
+            <button class="modal-btn" onclick="resetCourse()">Перезагрузить Цикл</button>
         </div>
     </div>
 
     <script>
-        // Получаем элементы интерфейса
-        const balance = document.getElementById('balance');
-        const moneyPlus = document.getElementById('money-plus');
-        const moneyMinus = document.getElementById('money-minus');
-        const list = document.getElementById('list');
-        const form = document.getElementById('form');
-        const textInput = document.getElementById('text');
-        const amountInput = document.getElementById('amount');
+        /* ==========================================================================
+           1. ДАННЫЕ УРОКОВ (LESSON DATA)
+           (Для экономии места в HTML, остальные уроки храним здесь)
+           ========================================================================== */
+        const lessonsData = {
+            3: { title: "Арифметика Матрицы", subtitle: "Уровень 3: Операции с числами", text: "<p>Python силен в математике. Базовые операторы: <code class='inline-code'>+</code>, <code class='inline-code'>-</code>, <code class='inline-code'>*</code>, <code class='inline-code'>/</code>.</p><p>Есть и специфические: <code class='inline-code'>**</code> (возведение в степень), <code class='inline-code'>//</code> (целочисленное деление), <code class='inline-code'>%</code> (остаток от деления).</p>", code: `<span class="c-kw">import</span> math\n\n<span class="c-kw">core_count</span> = <span class="c-nm">8</span>\n<span class="c-kw">power_per_core</span> = <span class="c-nm">1.5</span>\n<span class="c-kw">total_power</span> = core_count * power_per_core\n\n<span class="fn">print</span>(<span class="c-st">"Общая мощность симуляции:"</span>, total_power, <span class="c-st">"Пфлопс"</span>)\n<span class="c-cm"># Возведение в степень (8 в квадрате)</span>\n<span class="fn">print</span>(<span class="c-st">"Квадрат ядер:"</span>, core_count ** <span class="c-nm">2</span>)`, out: "Общая мощность симуляции: 12.0 Пфлопс\nКвадрат ядер: 64" },
+            4: { title: "Ветвление реальности (If)", subtitle: "Уровень 4: Логические операторы и условия", text: "<p>Программа должна уметь принимать решения. Для этого используется конструкция <code class='inline-code'>if</code> (если), <code class='inline-code'>elif</code> (иначе если) и <code class='inline-code'>else</code> (иначе).</p><p>Важны **отступы** (4 пробела)! Они показывают, какой блок кода относится к условию.</p>", code: `<span class="c-kw">status</span> = <span class="c-st">"danger"</span>\n<span class="c-kw">integrity</span> = <span class="c-nm">40</span>\n\n<span class="c-kw">if</span> integrity > <span class="c-nm">80</span> <span class="c-op">and</span> status <span class="c-op">==</span> <span class="c-st">"online"</span>:\n    <span class="fn">print</span>(<span class="c-st">"Система стабильна."</span>)\n<span class="c-kw">elif</span> integrity > <span class="c-nm">30</span>:\n    <span class="fn">print</span>(<span class="c-st">"ВНИМАНИЕ: Повреждение брони."</span>)\n<span class="c-kw">else</span>:\n    <span class="fn">print</span>(<span class="c-st">"КРИТИЧЕСКИЙ СБОЙ!"</span>)`, out: "ВНИМАНИЕ: Повреждение брони." },
+            5: { title: "Массивы данных: Списки", subtitle: "Уровень 5: Работа с упорядоченными коллекциями", text: "<p>Списки (<code class='inline-code'>list</code>) позволяют хранить множество элементов под одним именем. Они создаются в квадратных скобках.</p><p>Элементы нумеруются с **НУЛЯ**.</p>", code: `<span class="c-cm"># Список протоколов взлома</span>\n<span class="c-kw">protocols</span> = [<span class="c-st">"SSH_Brute"</span>, <span class="c-st">"SQL_Inj"</span>, <span class="c-st">"Buffer_Overflow"</span>]\n\n<span class="fn">print</span>(<span class="c-st">"Всего протоколов:"</span>, <span class="fn">len</span>(protocols))\n<span class="fn">print</span>(<span class="c-st">"Выбран базовый:"</span>, protocols[<span class="c-nm">0</span>])\n\n<span class="c-cm"># Добавление нового</span>\nprotocols.<span class="fn">append</span>(<span class="c-st">"ZeroDay_X"</span>)`, out: "Всего протоколов: 3\nВыбран базовый: SSH_Brute" },
+            6: { title: "Циклы: Бесконечность", subtitle: "Уровень 6: Автоматизация повторений с For и While", text: "<p>Циклы нужны для перебора элементов (например, списка) или повторения кода, пока условие верно.</p><p><code class='inline-code'>for</code> — для перебора коллекций, <code class='inline-code'>while</code> — пока верно условие.</p>", code: `<span class="c-kw">targets</span> = [<span class="c-st">"Mainframe"</span>, <span class="c-st">"Proxy_1"</span>, <span class="c-st">"Database"</span>]\n\n<span class="c-kw">for</span> server <span class="c-kw">in</span> targets:\n    <span class="fn">print</span>(<span class="c-st">f"Сканирование порта: {server}..."</span>)\n    \n<span class="fn">print</span>(<span class="c-st">"Цикл завершен."</span>)`, out: "Сканирование порта: Mainframe...\nСканирование порта: Proxy_1...\nСканирование порта: Database...\nЦикл завершен." },
+            7: { title: "Протоколы: Функции", subtitle: "Уровень 7: Создание переиспользуемых блоков кода", text: "<p>Функции (<code class='inline-code'>def</code>) позволяют сгруппировать код и вызывать его по имени много раз.</p><p>Они могут принимать параметры и возвращать результат через <code class='inline-code'>return</code>.</p>", code: `<span class="c-kw">def</span> <span class="fn">calc_integrity</span>(damage, armor):\n    <span class="c-kw">result</span> = armor - (damage * <span class="c-nm">0.5</span>)\n    <span class="c-kw">return</span> <span class="fn">max</span>(<span class="c-nm">0</span>, result)\n\n<span class="c-cm"># Вызов функции</span>\n<span class="c-kw">current_health</span> = <span class="fn">calc_integrity</span>(damage=<span class="c-nm">50</span>, armor=<span class="c-nm">100</span>)\n<span class="fn">print</span>(<span class="c-st">"Остаток брони:"</span>, current_health)`, out: "Остаток брони: 75.0" },
+            8: { title: "Ключ-Значение: Словари", subtitle: "Уровень 8: Ассоциативные массивы (JSON style)", text: "<p>Словари (<code class='inline-code'>dict</code>) хранят пары ключ:значение. Идеально для описания объектов.</p>", code: `<span class="c-kw">neural_net</span> = {\n    <span class="c-st">"id"</span>: <span class="c-st">"neuro_x"</span>,\n    <span class="c-st">"layers"</span>: <span class="c-nm">128</span>,\n    <span class="c-st">"active"</span>: <span class="c-bo">True</span>\n}\n\n<span class="fn">print</span>(<span class="c-st">"Сеть:"</span>, neural_net[<span class="c-st">"id"</span>])\n<span class="fn">print</span>(<span class="c-st">"Статус:"</span>, neural_net.get(<span class="c-st">"active"</span>))`, out: "Сеть: neuro_x\nСтатус: True" },
+            9: { title: "Текст & Слияние (f-strings)", subtitle: "Уровень 9: Современное форматирование строк", text: "<p>f-строки позволяют вставлять переменные прямо внутрь текста.</p>", code: `<span class="c-kw">user</span> = <span class="c-st">"Root_Admin"</span>\n<span class="c-kw">ip</span> = <span class="c-st">"192.168.1.1"</span>\n\n<span class="c-cm"># f-строка (префикс 'f' перед кавычкой)</span>\n<span class="c-kw">log_msg</span> = <span class="c-st">f"Вход в систему: {user} с IP {ip}"</span>\n\n<span class="fn">print</span>(log_msg)`, out: "Вход в систему: Root_Admin с IP 192.168.1.1" },
+            10: { title: "Модули: Импорт Силы", subtitle: "Уровень 10: Подключение внешних библиотек", text: "<p>Python силен своими библиотеками. Используй <code class='inline-code'>import</code>.</p>", code: `<span class="c-kw">import</span> random\n<span class="c-kw">import</span> time\n\n<span class="fn">print</span>(<span class="c-st">"Генерация ключа..."</span>)\ntime.<span class="fn">sleep</span>(<span class="c-nm">1</span>) <span class="c-cm"># Пауза 1 сек</span>\n\n<span class="c-kw">key</span> = random.<span class="fn">randint</span>(<span class="c-nm">1000</span>, <span class="c-nm">9999</span>)\n<span class="fn">print</span>(<span class="c-st">f"Ключ доступа: {key}"</span>)`, out: "Генерация ключа...\nКлюч доступа: 7439 (случайно)" },
+            11: { title: "Сбои системы: Ошибки", subtitle: "Уровень 11: Обработка исключений Try/Except", text: "<p>Обработка ошибок предотвращает падение программы.</p>", code: `<span class="c-kw">try</span>:\n    <span class="c-cm"># Намеренная ошибка</span>
+    <span class="c-kw">res</span> = <span class="c-nm">10</span> / <span class="c-nm">0</span>\n<span class="c-kw">except</span> <span class="c-bo">ZeroDivisionError</span>:\n    <span class="fn">print</span>(<span class="c-st">"КРИТИЧЕСКИЙ СБОЙ: Деление на ноль."</span>)\n<span class="c-kw">finally</span>:\n    <span class="fn">print</span>(<span class="c-st">"Очистка буфера..."</span>)`, out: "КРИТИЧЕСКИЙ СБОЙ: Деление на ноль.\nОчистка буфера..." },
+            12: { title: "Поток данных: Файлы", subtitle: "Уровень 12: Чтение и запись данных на диск", text: "<p>Работа с файлами через конструкцию <code class='inline-code'>with open</code>.</p>", code: `<span class="c-cm"># Запись</span>\n<span class="c-kw">with open</span>(<span class="c-st">"log.txt"</span>, <span class="c-st">"w"</span>) <span class="kw">as</span> file:\n    file.<span class="fn">write</span>(<span class="c-st">"System initialization complete."</span>)\n\n<span class="fn">print</span>(<span class="c-st">"Лог записан."</span>)`, out: "Лог записан." },
+            13: { title: "Объекты & Классы (ООП)", subtitle: "Уровень 13: Объектно-Ориентированное Программирование", text: "<p>ООП позволяет моделировать реальные объекты через чертежи (Классы).</p>", code: `<span class="c-kw">class</span> <span class="fn">Drone</span>:\n    <span class="c-kw">def</span> <span class="fn">__init__</span>(self, id):\n        self.id = id\n        self.battery = <span class="c-nm">100</span>\n\n    <span class="c-kw">def</span> <span class="fn">scan</span>(self):\n        <span class="fn">print</span>(<span class="c-st">f"Дрон {self.id} сканирует сектор..."</span>)\n\n<span class="c-kw">d1</span> = <span class="fn">Drone</span>(<span class="c-st">"X-1"</span>)\nd1.<span class="fn">scan</span>()`, out: "Дрон X-1 сканирует сектор..." },
+            14: { title: "Сеть: Запросы к API", subtitle: "Уровень 14: Взаимодействие с внешними серверами", text: "<p>Используем библиотеку <code class='inline-code'>requests</code> для получения данных из сети.</p>", code: `<span class="c-cm"># Имитация запроса (requests в браузере не работает)</span>
+<span class="c-kw">import</span> json\n\n<span class="c-kw">fake_response</span> = <span class="c-st">'{"status": "ok", "temp": -5}'</span>\n<span class="c-kw">data</span> = json.<span class="fn">loads</span>(fake_response)\n\n<span class="fn">print</span>(<span class="c-st">"Температура на сервере:"</span>, data[<span class="c-st">"temp"</span>])`, out: "Температура на сервере: -5" },
+            15: { title: "Создаем Telegram Бота", subtitle: "Уровень 15: Финальный бот (aiogram style)", text: "<p>Основа асинхронного бота.</p>", code: `<span class="c-cm"># Псевдокод асинхронного бота</span>
+<span class="c-kw">from</span> aiogram <span class="c-kw">import</span> Bot, Dispatcher\n\n<span class="fn">print</span>(<span class="c-st">"Бот инициализирован..."</span>)\n<span class="fn">print</span>(<span class="c-st">"Запуск polling (ожидание сообщений)..."</span>)`, out: "Бот инициализирован...\nЗапуск polling (ожидание сообщений)..." }
+        };
 
-        // Вытаскиваем данные из LocalStorage браузера. Если там пусто - создаем пустой массив [].
-        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        const totalLessons = 15;
 
-        // Функция: Генерируем случайный ID для каждой записи
-        function generateID() {
-            return Math.floor(Math.random() * 100000000);
-        }
-
-        // Функция: Получаем красивую дату (например, 22.10.2024)
-        function getCurrentDate() {
-            const date = new Date();
-            return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit' });
-        }
-
-        // Функция: Добавление транзакции
-        function addTransaction(e) {
-            e.preventDefault(); // Останавливаем перезагрузку страницы при нажатии на кнопку
-
-            if (textInput.value.trim() === '' || amountInput.value.trim() === '') {
-                alert('Пожалуйста, введите название и сумму');
-                return;
+        /* ==========================================================================
+           2. УПРАВЛЕНИЕ UI (UI MANAGEMENT)
+           ========================================================================== */
+        // Состояние приложения
+        let state = {
+            currentView: 'course', // 'course' или 'videos'
+            currentLesson: 1,
+            completedLessons: new Set(),
+            videoLinks: {
+                1: null, 2: null, 3: null, 4: null, 5: null, 6: null
             }
+        };
 
-            // Узнаем, что выбрал пользователь: доход или расход
-            const type = document.querySelector('input[name="type"]:checked').value;
-            let amount = parseFloat(amountInput.value);
+        // DOM элементы
+        const els = {
+            sidebar: document.getElementById('sidebar'),
+            viewCourse:
+                document.getElementById('view-course'),
+            viewVideos: document.getElementById('view-videos'),
+            headTitle: document.getElementById('head-title'),
+            lessonArea: document.getElementById('lesson-content-area'),
+            pFill: document.getElementById('p-fill'),
+            pVal: document.getElementById('p-val'),
+            finishOverlay: document.getElementById('finish-overlay')
+        };
 
-            // Формируем объект данных
-            const transaction = {
-                id: generateID(),
-                text: textInput.value,
-                amount: amount,
-                type: type,
-                date: getCurrentDate()
-            };
-
-            // Добавляем в наш массив
-            transactions.push(transaction);
-
-            // Обновляем всё на экране
-            addTransactionDOM(transaction);
-            updateValues();
-            updateLocalStorage();
-
-            // Очищаем форму
-            textInput.value = '';
-            amountInput.value = '';
+        // Загрузка состояния из LocalStorage
+        function loadState() {
+            const savedProgress = localStorage.getItem('py_academy_progress');
+            if (savedProgress) {
+                state.completedLessons = new Set(JSON.parse(savedProgress));
+            }
+            const savedVideos = localStorage.getItem('py_academy_videos');
+            if (savedVideos) {
+                state.videoLinks = JSON.parse(savedVideos);
+            }
+            updateProgressUI();
+            updateVideoUI();
         }
 
-        // Функция: Отрисовка транзакции в HTML (Создаем блоки кодом)
-        function addTransactionDOM(transaction) {
-            // Удаляем надпись "Пока пусто", если она есть
-            const emptyState = document.querySelector('.empty-state');
-            if (emptyState) emptyState.remove();
+        // Сохранение прогресса
+        function saveProgress() {
+            localStorage.setItem('py_academy_progress', JSON.stringify([...state.completedLessons]));
+        }
 
-            const sign = transaction.type === 'income' ? '+' : '-';
-            const cssClass = transaction.type === 'income' ? 'inc' : 'exp';
+        // Переключение мобильной навигации
+        function toggleMobileNav() {
+            els.sidebar.classList.toggle('active');
+        }
 
-            const item = document.createElement('div');
-            item.classList.add('transaction', cssClass);
+        // Переключение главных вкладок (Курс/Видео)
+        function switchMainTab(view, btn) {
+            state.currentView = view;
+            
+            // Кнопки
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-            item.innerHTML = `
-                <div class="t-info">
-                    <span class="t-name">${transaction.text}</span>
-                    <span class="t-date">${transaction.date}</span>
-                </div>
-                <div class="t-right">
-                    <span class="t-amount ${cssClass}">${sign} ${Math.abs(transaction.amount)}</span>
-                    <button class="delete-btn" onclick="removeTransaction(${transaction.id})">×</button>
+            // Секции
+            els.viewCourse.classList.remove('active');
+            els.viewVideos.classList.remove('active');
+            
+            if (view === 'course') {
+                els.viewCourse.classList.add('active');
+                els.sidebar.classList.add('active'); // На десктопе всегда, на мобиле скроем JS
+                if(window.innerWidth > 900) {
+                     document.getElementById('nav-list').style.display = 'flex';
+                     document.getElementById('prog-zone').style.display = 'block';
+                }
+                loadLesson(state.currentLesson); // Вернуть заголовок
+            } else {
+                els.viewVideos.classList.add('active');
+                els.headTitle.innerText = "Медиа Центр";
+                // Скрыть навигацию уроков на десктопе, если мы в видео
+                 if(window.innerWidth > 900) {
+                     document.getElementById('nav-list').style.display = 'none';
+                     document.getElementById('prog-zone').style.display = 'none';
+                }
+            }
+            
+            if (window.innerWidth <= 900) {
+                toggleMobileNav(); // Закрыть сайдбар на мобильном при переключении
+            }
+        }
+
+        /* ==========================================================================
+           3. ЛОГИКА ОБУЧЕНИЯ (COURSE LOGIC)
+           ========================================================================== */
+        
+        // Загрузка контента урока
+        function loadLesson(num) {
+            state.currentLesson = num;
+            state.currentView = 'course';
+
+            // Навигация
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.getElementById('ni-' + num).classList.add('active');
+            
+            // Заголовок
+            els.headTitle.innerText = lessonsData[num]?.title || document.querySelector('#p1 h1').innerText;
+            
+            // Скрыть все страницы, показать нужную
+            document.querySelectorAll('.lesson-page').forEach(page => page.classList.remove('active'));
+            
+            const existingPage = document.getElementById('p' + num);
+            if (existingPage) {
+                existingPage.classList.add('active');
+            } else {
+                // Если страницы нет в HTML, генерируем её динамически
+                renderDynamicLesson(num);
+            }
+            
+            // Скролл наверх
+            els.viewCourse.scrollTop = 0;
+            
+            if (window.innerWidth <= 900 && els.sidebar.classList.contains('active')) {
+                toggleMobileNav(); // Закрыть меню на мобиле
+            }
+        }
+
+        // Рендер динамического урока (для уроков > 2)
+        function renderDynamicLesson(num) {
+            const data = lessonsData[num];
+            if (!data) return;
+
+            const lessonHTML = `
+                <div id="p${num}" class="lesson-page active">
+                    <h1>${data.title}</h1>
+                    <h2>${data.subtitle}</h2>
+                    <div class="lesson-content-text">${data.text}</div>
+                    
+                    <div class="ide-widget">
+                        <div class="ide-header">
+                            <div class="ide-file-info"><span class="ide-file-icon">📄</span> exercise_${num}.py</div>
+                            <div class="ide-actions">
+                                <button class="run-btn" onclick="runCode(${num}, this)">▶ ЗАПУСК</button>
+                            </div>
+                        </div>
+                        <div class="ide-body"><pre><code>${data.code}</code></pre></div>
+                        <div class="ide-terminal" id="term-${num}">
+                            <div class="term-head">Output</div>
+                            <div class="term-line"><span class="term-prefix">>>></span> <span class="term-out">...</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-footer">
+                        <button class="next-lesson-btn" onclick="completeLesson(${num}, ${num + 1})">
+                            ${num === totalLessons ? 'Завершить Цикл' : 'Далее'} →
+                        </button>
+                    </div>
                 </div>
             `;
-
-            list.prepend(item); // Добавляем новую запись в начало списка
+            els.lessonArea.innerHTML = lessonHTML;
         }
 
-        // Функция: Подсчет математики (Баланс, Доходы, Расходы)
-        function updateValues() {
-            let totalIncome = 0;
-            let totalExpense = 0;
-
-            transactions.forEach(t => {
-                if (t.type === 'income') {
-                    totalIncome += t.amount;
-                } else {
-                    totalExpense += t.amount;
-                }
-            });
-
-            const totalBalance = totalIncome - totalExpense;
-
-            // Форматируем числа, чтобы тысячи отделялись пробелом (1 000)
-            balance.innerText = totalBalance.toLocaleString('ru-RU') + ' ₸'; // Можно заменить на сом (с) или руб (₽)
-            moneyPlus.innerText = '+' + totalIncome.toLocaleString('ru-RU');
-            moneyMinus.innerText = '-' + totalExpense.toLocaleString('ru-RU');
-        }
-
-        // Функция: Удаление транзакции по клику на крестик
-        function removeTransaction(id) {
-            // Оставляем только те транзакции, ID которых НЕ равен удаляемому
-            transactions = transactions.filter(t => t.id !== id);
+        // Запуск кода (Симуляция)
+        function runCode(num, btn) {
+            btn.innerHTML = '⚙ ЗАГРУЗКА';
+            btn.style.opacity = '0.7';
             
-            updateLocalStorage();
-            init(); // Перерисовываем весь интерфейс
+            const data = lessonsData[num] || { out: document.querySelector('#term-1 .term-out').innerText };
+
+            setTimeout(() => {
+                const term = document.getElementById('term-' + num);
+                const termOut = term.querySelector('.term-out');
+                termOut.innerText = data.out;
+                term.classList.add('active');
+                
+                btn.innerHTML = '✔ ГОТОВО';
+                btn.style.background = 'var(--success)';
+                btn.style.color = '#fff';
+            }, 800);
         }
 
-        // Функция: Очистить всю историю
-        function clearAll() {
-            if(confirm('Удалить всю историю финансов? Это действие нельзя отменить.')) {
-                transactions = [];
-                updateLocalStorage();
-                init();
-            }
-        }
-
-        // Функция: Сохранение данных в кэш браузера
-        function updateLocalStorage() {
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-        }
-
-        // Функция: Запуск приложения
-        function init() {
-            list.innerHTML = ''; // Очищаем список
+        // Завершение урока
+        function completeLesson(currentNum, nextNum) {
+            state.completedLessons.add(currentNum);
+            document.getElementById('ni-' + currentNum).classList.add('done');
+            saveProgress();
+            updateProgressUI();
             
-            if (transactions.length === 0) {
-                list.innerHTML = '<div class="empty-state">История пуста. Добавьте первую запись!</div>';
+            if (currentNum === totalLessons) {
+                showFinish();
             } else {
-                // Если данные есть, рисуем их
-                transactions.forEach(addTransactionDOM);
+                loadLesson(nextNum);
             }
-            
-            updateValues();
         }
 
-        // Запуск
-        init();
+        // Обновление прогресс-бара
+        function updateProgressUI() {
+            const count = state.completedLessons.size;
+            const percentage = Math.round((count / totalLessons) * 100);
+            
+            els.pFill.style.width = percentage + '%';
+            els.pVal.innerText = percentage + '%';
+            
+            // Отметить выполненные в навигации при загрузке
+            state.completedLessons.forEach(num => {
+                const item = document.getElementById('ni-' + num);
+                if(item) item.classList.add('done');
+            });
+        }
+        
+        function showFinish() {
+            els.finishOverlay.classList.add('active');
+        }
+        
+        function resetCourse() {
+            state.completedLessons.clear();
+            localStorage.removeItem('py_academy_progress');
+            location.reload();
+        }
 
-        // Слушатель на кнопку в форме
-        form.addEventListener('submit', addTransaction);
+        /* ==========================================================================
+           4. ЛОГИКА ВИДЕО (VIDEOS LOGIC)
+           ========================================================================== */
+        
+        function updateVideoUI() {
+            for (let i = 1; i <= 6; i++) {
+                const link = state.videoLinks[i];
+                const display = document.getElementById('v-link-' + i);
+                const watchBtn = document.getElementById('v-watch-1' + i); // Фикс ID? Нет, ID в HTML v-watch-1, v-watch-2...
+                const watchBtnReal = document.getElementById('v-watch-' + i);
+                
+                if (link) {
+                    display.innerText = link;
+                    display.classList.add('active');
+                    watchBtnReal.disabled = false;
+                } else {
+                    display.innerText = "Нет ссылки";
+                    display.classList.remove('active');
+                    watchBtnReal.disabled = true;
+                }
+            }
+        }
+
+        function setVideoLink(id) {
+            const currentLink = state.videoLinks[id] || '';
+            const newLink = prompt(`Вставь URL с YouTube для Урока ${id}:`, currentLink);
+            
+            if (newLink !== null) {
+                // Базовая валидация youtube
+                if (newLink === '' || newLink.includes('youtube.com') || newLink.includes('youtu.be')) {
+                    state.videoLinks[id] = newLink === '' ? null : newLink;
+                    localStorage.setItem('py_academy_videos', JSON.stringify(state.videoLinks));
+                    updateVideoUI();
+                } else {
+                    alert('Ошибка: Пожалуйста, введи корректную ссылку на YouTube (должна содержать youtube.com или youtu.be)');
+                }
+            }
+        }
+
+        function watchVideo(id) {
+            const link = state.videoLinks[id];
+            if (link) {
+                window.open(link, '_blank');
+            }
+        }
+
+        /* ==========================================================================
+           5. ИНИЦИАЛИЗАЦИЯ (INITIALIZATION)
+           ========================================================================== */
+        window.addEventListener('load', () => {
+            loadState();
+            // loadLesson(1); // Загружается по умолчанию HTML
+            
+            // Фикс для десктопа: показывать навигацию уроков
+            if(window.innerWidth > 900) {
+                 document.getElementById('nav-list').style.display = 'flex';
+                 document.getElementById('prog-zone').style.display = 'block';
+            }
+        });
+        
+        // Обработка ресайза окна для корректного отображения меню
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) {
+                els.sidebar.classList.add('active');
+                if (state.currentView === 'course') {
+                    document.getElementById('nav-list').style.display = 'flex';
+                    document.getElementById('prog-zone').style.display = 'block';
+                }
+            } else {
+                els.sidebar.classList.remove('active');
+            }
+        });
+        
     </script>
 </body>
-    </html>
-    
+</html>
