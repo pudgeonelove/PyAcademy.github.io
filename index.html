@@ -3,100 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyAcademy | Full 12 Levels</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>PyAcademy | Ultimate 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-main: #0f111a;
-            --bg-sidebar: #151822;
-            --card-bg: #1e2230;
+            --bg-main: #090a0f;
+            --bg-sidebar: #11131c;
+            --card-bg: #181b28;
             --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
+            --text-muted: #8b94a8;
             --python-blue: #3776ab;
+            --python-blue-glow: rgba(55, 118, 171, 0.4);
             --python-yellow: #ffd43b;
+            --python-yellow-glow: rgba(255, 212, 59, 0.2);
             --success: #10b981;
-            --border: #2a2f42;
+            --border: #232738;
             --yt-red: #ff0000;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--python-blue); }
+
         body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        .sidebar { width: 300px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; z-index: 10; }
-        .logo { font-size: 20px; font-weight: 800; color: var(--python-yellow); margin-bottom: 20px; text-align: center; }
+        /* САЙДБАР */
+        .sidebar { width: 320px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 25px; z-index: 10; box-shadow: 5px 0 20px rgba(0,0,0,0.2); }
+        .logo { font-size: 24px; font-weight: 900; color: var(--text-main); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 15px var(--python-yellow-glow); }
+        .logo span { color: var(--python-yellow); }
         
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 10px; background: var(--bg-main); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        .tab-btn.active { background: var(--python-blue); color: #fff; border-color: var(--python-blue); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: var(--bg-main); padding: 5px; border-radius: 10px; border: 1px solid var(--border); }
+        .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .tab-btn:hover { color: var(--text-main); }
+        .tab-btn.active { background: var(--python-blue); color: #fff; box-shadow: 0 0 15px var(--python-blue-glow); }
 
-        .progress-box { margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; }
-        .prog-text { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; color: var(--text-muted); }
-        .bar-bg { width: 100%; height: 5px; background: #000; border-radius: 10px; }
-        .bar-fill { height: 100%; width: 0%; background: var(--python-yellow); transition: 0.4s; }
+        .progress-box { margin-bottom: 25px; background: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+        .prog-text { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); text-transform: uppercase; }
+        .bar-bg { width: 100%; height: 6px; background: var(--bg-main); border-radius: 10px; overflow: hidden; border: 1px solid #000; }
+        .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, var(--python-yellow)); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--python-yellow); }
 
-        .nav-list { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex: 1; }
-        .nav-item { background: none; border: 1px solid transparent; color: var(--text-muted); padding: 10px; border-radius: 6px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; font-size: 13px; }
-        .nav-item:hover { background: rgba(255,255,255,0.05); }
-        .nav-item.active { background: var(--card-bg); border-color: var(--python-blue); color: #fff; }
-        .check { margin-left: auto; color: var(--success); display: none; }
-        .nav-item.done .check { display: block; }
+        .nav-list { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; padding-right: 5px; }
+        .nav-item { background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 12px 15px; border-radius: 10px; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; transition: all 0.2s ease; }
+        .nav-item:hover { background: rgba(255,255,255,0.03); transform: translateX(3px); }
+        .nav-item.active { background: var(--card-bg); border-color: var(--border); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-left: 3px solid var(--python-blue); }
+        
+        .num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--python-blue); width: 20px; }
+        .nav-item.active .num { color: var(--python-yellow); }
+        .check { margin-left: auto; color: var(--success); display: none; font-size: 16px; text-shadow: 0 0 10px rgba(16,185,129,0.5); }
+        .nav-item.done .check { display: block; animation: popIn 0.3s ease; }
 
-        .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-        .header { padding: 15px 30px; border-bottom: 1px solid var(--border); background: var(--bg-main); sticky; top: 0; }
+        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
-        .view-section { display: none; padding: 30px; }
+        /* ОСНОВНАЯ ЗОНА */
+        .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
+        .header { padding: 25px 40px; border-bottom: 1px solid var(--border); background: rgba(9, 10, 15, 0.9); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 5; }
+        .header h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+
+        .view-section { display: none; padding: 40px; }
         .view-section.active { display: block; }
 
-        .lesson-page { display: none; max-width: 700px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+        .lesson-page { display: none; max-width: 800px; margin: 0 auto; animation: slideUp 0.4s ease; }
         .lesson-page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { margin-bottom: 15px; color: #fff; }
-        p { color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; }
+        h2 { font-size: 28px; margin-bottom: 15px; color: #fff; letter-spacing: -0.5px; }
+        p { color: var(--text-muted); line-height: 1.6; font-size: 16px; margin-bottom: 25px; }
 
-        .code-area { background: #0b0d14; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 20px; }
-        .code-top { background: #131620; padding: 8px 15px; display: flex; justify-content: space-between; font-size: 12px; }
-        .run-btn { background: var(--success); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        pre { padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #abb2bf; line-height: 1.4; }
-        .terminal { background: #000; padding: 12px; border-top: 1px solid var(--border); color: #10b981; display: none; font-family: 'JetBrains Mono'; font-size: 13px; }
-
-        .next-btn { background: var(--python-blue); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        /* КОДОВЫЙ БЛОК */
+        .code-area { background: #0b0d14; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; }
+        .code-top { background: #131620; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a1e2d; }
+        .file-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+        .file-name::before { content: "🐍"; }
         
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-        .video-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 12px; text-decoration: none; text-align: center; color: #fff; transition: 0.2s; }
-        .video-btn:hover { border-color: var(--yt-red); transform: translateY(-3px); }
-        .yt-icon { font-size: 30px; color: var(--yt-red); margin-bottom: 10px; display: block; }
+        .run-btn { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.3); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .run-btn:hover { background: var(--success); color: #fff; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
+        .run-btn:active { transform: scale(0.95); }
+        
+        pre { padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #abb2bf; line-height: 1.5; overflow-x: auto; }
+        
+        /* Цвета синтаксиса */
+        .kw { color: #c678dd; } /* Ключевые слова */
+        .str { color: #98c379; } /* Строки */
+        .fn { color: #61afef; } /* Функции */
+        .num-val { color: #d19a66; } /* Числа */
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 100; }
-        .modal-box { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; border: 1px solid var(--python-yellow); }
+        .terminal { background: #050608; padding: 15px 20px; border-top: 1px solid var(--border); color: #a7b6c2; display: none; font-family: 'JetBrains Mono'; font-size: 13px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); }
+        .term-prefix { color: var(--success); margin-right: 8px; }
+
+        .next-btn { background: var(--python-blue); color: #fff; border: none; padding: 16px 32px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 15px var(--python-blue-glow); }
+        .next-btn:hover { background: #4b8bc4; transform: translateY(-2px); box-shadow: 0 8px 25px var(--python-blue-glow); }
+
+        /* СЕТКА ВИДЕО (Вкладка 2) */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; max-width: 1000px; margin: 0 auto; }
+        .video-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px 20px; text-decoration: none; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; position: relative; overflow: hidden; }
+        .video-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--yt-red); transform: scaleX(0); transition: 0.3s transform; transform-origin: left; }
+        .video-card:hover { border-color: rgba(255,0,0,0.3); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        .video-card:hover::before { transform: scaleX(1); }
+        
+        .yt-icon { font-size: 45px; color: var(--yt-red); margin-bottom: 15px; transition: 0.3s; filter: drop-shadow(0 0 10px rgba(255,0,0,0.3)); }
+        .video-card:hover .yt-icon { transform: scale(1.1); }
+        .v-title { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .v-sub { color: var(--text-muted); font-size: 13px; }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border: 1px solid var(--python-yellow); max-width: 450px; box-shadow: 0 0 50px rgba(255,212,59,0.2); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-icon { font-size: 60px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,212,59,0.5); }
+        .modal-btn { background: #fff; color: #000; border: none; padding: 14px 30px; border-radius: 8px; font-weight: 800; font-size: 16px; margin-top: 25px; cursor: pointer; transition: 0.2s; width: 100%; }
+        .modal-btn:hover { background: var(--python-yellow); box-shadow: 0 0 15px rgba(255,212,59,0.5); }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="logo">🐍 PY-ACADEMY</div>
+        <div class="logo">🐍 <span>Py</span>Academy</div>
+        
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('course', this)">КУРС</button>
-            <button class="tab-btn" onclick="switchTab('videos', this)">ВИДЕО</button>
+            <button class="tab-btn active" onclick="switchTab('course', this)">💻 Уроки</button>
+            <button class="tab-btn" onclick="switchTab('videos', this)">🎥 Видео</button>
         </div>
+        
         <div id="sidebar-progress" class="progress-box">
             <div class="prog-text"><span>Прогресс</span> <span id="p-val">0%</span></div>
             <div class="bar-bg"><div class="bar-fill" id="p-fill"></div></div>
         </div>
+        
         <nav class="nav-list" id="nav-list">
-            <button class="nav-item active" onclick="jump(1)" id="ni-1">1. Переменные <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(2)" id="ni-2">2. Математика <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(3)" id="ni-3">3. Условия <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(4)" id="ni-4">4. Списки <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(5)" id="ni-5">5. Циклы <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(6)" id="ni-6">6. Функции <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(7)" id="ni-7">7. Словари <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(8)" id="ni-8">8. Ошибки <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(9)" id="ni-9">9. f-строки <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(10)" id="ni-10">10. Импорт <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(11)" id="ni-11">11. Файлы <span class="check">✓</span></button>
-            <button class="nav-item" onclick="jump(12)" id="ni-12">12. Классы <span class="check">✓</span></button>
+            <button class="nav-item active" onclick="jump(1)" id="ni-1"><span class="num">01</span> Переменные <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(2)" id="ni-2"><span class="num">02</span> Вычисления <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(3)" id="ni-3"><span class="num">03</span> Условия <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(4)" id="ni-4"><span class="num">04</span> Списки <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(5)" id="ni-5"><span class="num">05</span> Циклы <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(6)" id="ni-6"><span class="num">06</span> Функции <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(7)" id="ni-7"><span class="num">07</span> Словари <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(8)" id="ni-8"><span class="num">08</span> Ошибки <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(9)" id="ni-9"><span class="num">09</span> f-строки <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(10)" id="ni-10"><span class="num">10</span> Модули <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(11)" id="ni-11"><span class="num">11</span> Файлы <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(12)" id="ni-12"><span class="num">12</span> Классы <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(13)" id="ni-13"><span class="num">13</span> Работа с API <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(14)" id="ni-14"><span class="num">14</span> Telegram Боты <span class="check">✓</span></button>
+            <button class="nav-item" onclick="jump(15)" id="ni-15"><span class="num">15</span> Нейросети <span class="check">✓</span></button>
         </nav>
     </aside>
 
@@ -106,200 +158,96 @@
             
             <div class="lesson-container">
                 <div id="p1" class="lesson-page active">
-                    <h2>Переменные</h2>
-                    <p>Переменные — это коробки для данных. Мы создаем имя и кладем туда значение.</p>
+                    <h2>Основы: Переменные</h2>
+                    <p>Переменные — это коробки, в которых мы храним данные. Сначала пишем имя коробки, потом знак <code>=</code>, а потом то, что хотим туда положить.</p>
                     <div class="code-area">
-                        <div class="code-top"><span>script.py</span> <button class="run-btn" onclick="run(1, this)">ЗАПУСК</button></div>
-                        <pre><code>name = "Gamer"\nlevel = 15\nprint(f"Привет, {name}!")</code></pre>
-                        <div id="out1" class="terminal">> Привет, Gamer!</div>
+                        <div class="code-top"><span class="file-name">main.py</span> <button class="run-btn" onclick="run(1, this)">▶ ЗАПУСК</button></div>
+                        <pre><code><span class="kw">name</span> = <span class="str">"Gamer"</span>
+<span class="kw">level</span> = <span class="num-val">15</span>
+<span class="fn">print</span>(<span class="str">"Игрок:"</span>, name, <span class="str">"Уровень:"</span>, level)</code></pre>
+                        <div id="out1" class="terminal"><span class="term-prefix">~</span> Игрок: Gamer Уровень: 15</div>
                     </div>
-                    <button class="next-btn" onclick="done(1, 2)">Далее →</button>
+                    <button class="next-btn" onclick="done(1, 2)">Следующий урок →</button>
                 </div>
 
                 <div id="p2" class="lesson-page">
-                    <h2>Математика</h2>
-                    <p>Python умеет считать быстрее любого калькулятора.</p>
+                    <h2>Вычисления (Математика)</h2>
+                    <p>Python можно использовать как мощный калькулятор. Складывай, дели, умножай переменные между собой.</p>
                     <div class="code-area">
-                        <div class="code-top"><span>calc.py</span> <button class="run-btn" onclick="run(2, this)">ЗАПУСК</button></div>
-                        <pre><code>damage = 50\ncrit = 1.5\nprint("Урон:", damage * crit)</code></pre>
-                        <div id="out2" class="terminal">> Урон: 75.0</div>
+                        <div class="code-top"><span class="file-name">calc.py</span> <button class="run-btn" onclick="run(2, this)">▶ ЗАПУСК</button></div>
+                        <pre><code><span class="kw">price</span> = <span class="num-val">1500</span>
+<span class="kw">discount</span> = <span class="num-val">300</span>
+<span class="fn">print</span>(<span class="str">"Итоговая цена одежды:"</span>, price - discount)</code></pre>
+                        <div id="out2" class="terminal"><span class="term-prefix">~</span> Итоговая цена одежды: 1200</div>
                     </div>
-                    <button class="next-btn" onclick="done(2, 3)">Далее →</button>
+                    <button class="next-btn" onclick="done(2, 3)">Следующий урок →</button>
                 </div>
 
                 <div id="p3" class="lesson-page">
-                    <h2>Условия (if)</h2>
-                    <p>Проверка условий позволяет программе принимать решения.</p>
+                    <h2>Условия (if / else)</h2>
+                    <p>Если условие верное — программа делает одно. Если нет — другое. Это основа логики любой игры или приложения.</p>
                     <div class="code-area">
-                        <div class="code-top"><span>logic.py</span> <button class="run-btn" onclick="run(3, this)">ЗАПУСК</button></div>
-                        <pre><code>hp = 20\nif hp < 30:\n    print("Нужна аптечка!")</code></pre>
-                        <div id="out3" class="terminal">> Нужна аптечка!</div>
+                        <div class="code-top"><span class="file-name">logic.py</span> <button class="run-btn" onclick="run(3, this)">▶ ЗАПУСК</button></div>
+                        <pre><code><span class="kw">hp</span> = <span class="num-val">20</span>
+<span class="kw">if</span> hp < <span class="num-val">50</span>:
+    <span class="fn">print</span>(<span class="str">"Срочно нужен Медик!"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"В бой!"</span>)</code></pre>
+                        <div id="out3" class="terminal"><span class="term-prefix">~</span> Срочно нужен Медик!</div>
                     </div>
-                    <button class="next-btn" onclick="done(3, 4)">Далее →</button>
+                    <button class="next-btn" onclick="done(3, 4)">Следующий урок →</button>
                 </div>
 
                 <div id="p4" class="lesson-page">
                     <h2>Списки (Lists)</h2>
-                    <p>Список — это набор предметов (инвентарь) под одним именем.</p>
+                    <p>Когда нужно сохранить много данных (например, инвентарь или список заказов), мы используем квадратные скобки.</p>
                     <div class="code-area">
-                        <div class="code-top"><span>items.py</span> <button class="run-btn" onclick="run(4, this)">ЗАПУСК</button></div>
-                        <pre><code>inv = ["Меч", "Щит", "Зелье"]\nprint("В руках:", inv[0])</code></pre>
-                        <div id="out4" class="terminal">> В руках: Меч</div>
+                        <div class="code-top"><span class="file-name">inventory.py</span> <button class="run-btn" onclick="run(4, this)">▶ ЗАПУСК</button></div>
+                        <pre><code><span class="kw">cart</span> = [<span class="str">"Худи"</span>, <span class="str">"Футболка"</span>, <span class="str">"Кепка"</span>]
+<span class="fn">print</span>(<span class="str">"Первый товар в корзине:"</span>, cart[<span class="num-val">0</span>])</code></pre>
+                        <div id="out4" class="terminal"><span class="term-prefix">~</span> Первый товар в корзине: Худи</div>
                     </div>
-                    <button class="next-btn" onclick="done(4, 5)">Далее →</button>
+                    <button class="next-btn" onclick="done(4, 5)">Следующий урок →</button>
                 </div>
 
                 <div id="p5" class="lesson-page">
-                    <h2>Циклы (for)</h2>
-                    <p>Циклы повторяют действие для каждого элемента в списке.</p>
+                    <h2>Циклы (for / while)</h2>
+                    <p>Циклы позволяют повторять одно и то же действие много раз, не переписывая код вручную.</p>
                     <div class="code-area">
-                        <div class="code-top"><span>loop.py</span> <button class="run-btn" onclick="run(5, this)">ЗАПУСК</button></div>
-                        <pre><code>for x in range(3):\n    print("Выстрел!")</code></pre>
-                        <div id="out5" class="terminal">> Выстрел!<br>> Выстрел!<br>> Выстрел!</div>
+                        <div class="code-top"><span class="file-name">loop.py</span> <button class="run-btn" onclick="run(5, this)">▶ ЗАПУСК</button></div>
+                        <pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num-val">3</span>):
+    <span class="fn">print</span>(<span class="str">"Генерация логотипа..."</span>)</code></pre>
+                        <div id="out5" class="terminal"><span class="term-prefix">~</span> Генерация логотипа...<br><span class="term-prefix">~</span> Генерация логотипа...<br><span class="term-prefix">~</span> Генерация логотипа...</div>
                     </div>
-                    <button class="next-btn" onclick="done(5, 6)">Далее →</button>
+                    <button class="next-btn" onclick="done(5, 6)">Следующий урок →</button>
                 </div>
 
                 <div id="p6" class="lesson-page">
                     <h2>Функции (def)</h2>
-                    <p>Функция — это блок кода, который можно вызывать по имени много раз.</p>
+                    <p>Функция — это твой собственный кусок кода, которому ты дал имя. Вызывай его, когда он понадобится.</p>
                     <div class="code-area">
-                        <div class="code-top"><span>func.py</span> <button class="run-btn" onclick="run(6, this)">ЗАПУСК</button></div>
-                        <pre><code>def heal():\n    print("Здоровье +10")\n\nheal()</code></pre>
-                        <div id="out6" class="terminal">> Здоровье +10</div>
+                        <div class="code-top"><span class="file-name">functions.py</span> <button class="run-btn" onclick="run(6, this)">▶ ЗАПУСК</button></div>
+                        <pre><code><span class="kw">def</span> <span class="fn">ubercharge</span>():
+    <span class="fn">print</span>(<span class="str">"Убер-заряд активирован! Неуязвимость 8 сек."</span>)
+
+<span class="fn">ubercharge</span>()</code></pre>
+                        <div id="out6" class="terminal"><span class="term-prefix">~</span> Убер-заряд активирован! Неуязвимость 8 сек.</div>
                     </div>
-                    <button class="next-btn" onclick="done(6, 7)">Далее →</button>
+                    <button class="next-btn" onclick="done(6, 7)">Следующий урок →</button>
                 </div>
 
                 <div id="p7" class="lesson-page">
-                    <h2>Словари (dict)</h2>
-                    <p>Словари хранят данные в формате "Ключ: Значение".</p>
+                    <h2>Словари (Dict)</h2>
+                    <p>Словари идеальны для хранения характеристик объекта. Они работают по принципу "Ключ: Значение".</p>
                     <div class="code-area">
-                        <div class="code-top"><span>data.py</span> <button class="run-btn" onclick="run(7, this)">ЗАПУСК</button></div>
-                        <pre><code>hero = {"atk": 10, "def": 5}\nprint("Атака:", hero["atk"])</code></pre>
-                        <div id="out7" class="terminal">> Атака: 10</div>
+                        <div class="code-top"><span class="file-name">player.py</span> <button class="run-btn" onclick="run(7, this)">▶ ЗАПУСК</button></div>
+                        <pre><code><span class="kw">player</span> = {<span class="str">"class"</span>: <span class="str">"Heavy"</span>, <span class="str">"hp"</span>: <span class="num-val">300</span>}
+<span class="fn">print</span>(<span class="str">"Класс:"</span>, player[<span class="str">"class"</span>], <span class="str">"| Здоровье:"</span>, player[<span class="str">"hp"</span>])</code></pre>
+                        <div id="out7" class="terminal"><span class="term-prefix">~</span> Класс: Heavy | Здоровье: 300</div>
                     </div>
-                    <button class="next-btn" onclick="done(7, 8)">Далее →</button>
+                    <button class="next-btn" onclick="done(7, 8)">Следующий урок →</button>
                 </div>
 
                 <div id="p8" class="lesson-page">
-                    <h2>Ошибки (try/except)</h2>
-                    <p>Позволяют программе не "вылетать", если что-то пошло не так.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span>safe.py</span> <button class="run-btn" onclick="run(8, this)">ЗАПУСК</button></div>
-                        <pre><code>try:\n    print(10/0)\nexcept:\n    print("Ошибка деления!")</code></pre>
-                        <div id="out8" class="terminal">> Ошибка деления!</div>
-                    </div>
-                    <button class="next-btn" onclick="done(8, 9)">Далее →</button>
-                </div>
-
-                <div id="p9" class="lesson-page">
-                    <h2>F-строки</h2>
-                    <p>Самый быстрый и красивый способ объединять текст и переменные.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span>text.py</span> <button class="run-btn" onclick="run(9, this)">ЗАПУСК</button></div>
-                        <pre><code>user = "Admin"\nprint(f"Вход в систему: {user}")</code></pre>
-                        <div id="out9" class="terminal">> Вход в систему: Admin</div>
-                    </div>
-                    <button class="next-btn" onclick="done(9, 10)">Далее →</button>
-                </div>
-
-                <div id="p10" class="lesson-page">
-                    <h2>Импорт (библиотеки)</h2>
-                    <p>Используйте чужой готовый код для своих задач (например, рандом).</p>
-                    <div class="code-area">
-                        <div class="code-top"><span>random_val.py</span> <button class="run-btn" onclick="run(10, this)">ЗАПУСК</button></div>
-                        <pre><code>import random\nprint(random.randint(1, 100))</code></pre>
-                        <div id="out10" class="terminal">> 42 (случайно)</div>
-                    </div>
-                    <button class="next-btn" onclick="done(10, 11)">Далее →</button>
-                </div>
-
-                <div id="p11" class="lesson-page">
-                    <h2>Файлы</h2>
-                    <p>Python может создавать, записывать и читать текстовые файлы.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span>file.py</span> <button class="run-btn" onclick="run(11, this)">ЗАПУСК</button></div>
-                        <pre><code>with open("log.txt", "w") as f:\n    f.write("Log active")\nprint("Файл сохранен")</code></pre>
-                        <div id="out11" class="terminal">> Файл сохранен</div>
-                    </div>
-                    <button class="next-btn" onclick="done(11, 12)">Далее →</button>
-                </div>
-
-                <div id="p12" class="lesson-page">
-                    <h2>Классы (ООП)</h2>
-                    <p>Класс — это чертеж для создания сложных объектов.</p>
-                    <div class="code-area">
-                        <div class="code-top"><span>oop.py</span> <button class="run-btn" onclick="run(12, this)">ЗАПУСК</button></div>
-                        <pre><code>class Bot:\n    name = "Imba"\n\nb1 = Bot()\nprint(b1.name)</code></pre>
-                        <div id="out12" class="terminal">> Imba</div>
-                    </div>
-                    <button class="next-btn" onclick="done(12, 'end')">ЗАВЕРШИТЬ</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-videos" class="view-section">
-            <header class="header"><h3>🎥 Видеотека</h3></header>
-            <div class="video-grid">
-                <a href="https://youtu.be/34Rp6KVGIEM?si=xvViYUnVCppm6g0H" target="_blank" class="video-btn"><span class="yt-icon">▶</span>Урок 1</a>
-                <a href="https://youtu.be/CfqX2_xY8VQ?si=7QXsiRU6AXLkJqc_" target="_blank" class="video-btn"><span class="yt-icon">▶</span>Урок 2</a>
-                <a href="https://youtu.be/ML5tP8m6SHw?si=Dwl_PsHGcR89IyAM" target="_blank" class="video-btn"><span class="yt-icon">▶</span>Урок 3</a>
-                <a href="https://youtu.be/DZvNZ9l9NT4?si=co_SMqsTaXEbhOjs" target="_blank" class="video-btn"><span class="yt-icon">▶</span>Урок 4</a>
-                <a href="https://youtu.be/SUDNfS_0X-Q?si=2gNwQVD9cL0pIroI" target="_blank" class="video-btn"><span class="yt-icon">▶</span>Урок 5</a>
-                <a href="https://youtube.com" target="_blank" class="video-btn"><span class="yt-icon">▶</span>Проекты в scratch</a>
-            </div>
-        </section>
-    </main>
-
-    <div class="modal-overlay" id="modal">
-        <div class="modal-box">
-            <h2 style="color:var(--python-yellow)">🏆 ПОЗДРАВЛЯЕМ!</h2>
-            <p>Вы прошли все 12 уровней PyAcademy.</p>
-            <button class="next-btn" onclick="location.reload()">Начать заново</button>
-        </div>
-    </div>
-
-    <script>
-        const titles = ["Урок 1: Переменные", "Урок 2: Математика", "Урок 3: Условия", "Урок 4: Списки", "Урок 5: Циклы", "Урок 6: Функции", "Урок 7: Словари", "Урок 8: Ошибки", "Урок 9: f-строки", "Урок 10: Импорт", "Урок 11: Файлы", "Урок 12: Классы"];
-        let finished = new Set();
-
-        function switchTab(type, btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('view-course').classList.remove('active');
-            document.getElementById('view-videos').classList.remove('active');
-            document.getElementById('view-' + type).classList.add('active');
-            document.getElementById('nav-list').style.display = (type === 'course') ? 'flex' : 'none';
-            document.getElementById('sidebar-progress').style.display = (type === 'course') ? 'block' : 'none';
-        }
-
-        function jump(n) {
-            document.querySelectorAll('.lesson-page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('p' + n).classList.add('active');
-            document.getElementById('ni-' + n).classList.add('active');
-            document.getElementById('lesson-title').innerText = titles[n-1];
-        }
-
-        function run(id, btn) {
-            btn.innerText = '⌛';
-            setTimeout(() => {
-                document.getElementById('out' + id).style.display = 'block';
-                btn.innerText = 'OK';
-            }, 400);
-        }
-
-        function done(curr, next) {
-            finished.add(curr);
-            document.getElementById('ni-' + curr).classList.add('done');
-            let p = Math.round((finished.size / 12) * 100);
-            document.getElementById('p-val').innerText = p + '%';
-            document.getElementById('p-fill').style.width = p + '%';
-            if(next === 'end') { document.getElementById('modal').style.display = 'flex'; } 
-            else { jump(next); }
-        }
-    </script>
-</body>
-    </html>
-                                                                                                                                   
+                    <h2>Обработка ошибок (try)</h2>
+                    <p>Чтоб
